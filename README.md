@@ -1,9 +1,3 @@
-CS 309 Programming Assignments
-
-Due Date: 03/19
-
-&nbsp;
-
 Write a program to implement the simplex algorithm.
 
 1. (1)Assume all variables have the non-negativity constraints.&nbsp;
