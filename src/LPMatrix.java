@@ -12,15 +12,15 @@ import java.util.ArrayList;
 public class LPMatrix
 {
 
-    Bfs bfs;
-    ArrayList<Constraint> constraints;
+    AugRow bfs;
+    ArrayList<AugRow> constraints;
 
     // slack count
     int slackCount;
 
     LPMatrix()
     {
-        constraints = new ArrayList<Constraint>();
+        constraints = new ArrayList<AugRow>();
         int slackCount = 0;
     }
 
@@ -29,7 +29,7 @@ public class LPMatrix
      *
      * @param constraint a constraint that exists in the matrix
      */
-    public void addSlack(Constraint constraint)
+    public void addSlack(AugRow constraint)
     {
         assert constraints.indexOf(constraint)!=-1:"Constraint does not exist - can't add slack var";
 

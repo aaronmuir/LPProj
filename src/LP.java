@@ -7,6 +7,7 @@ public class LP
 {
     private static String fileString;
     private static String fileLocation;
+    private static LPMatrix Axb;
 
     public static void main(String args[])
     {
@@ -22,13 +23,13 @@ public class LP
                 fileString = io.readFile(fileLocation);
 
                 // parse string into standard form
-                LPMatrix Axb = convertToMatrix(fileString);
+                Axb = convertToMatrix(fileString);
 
                 // invoke solving algorithm
-                assert(true);
+
 
                 // output results
-                assert true;
+                System.out.println("results");
             }
             else
             {
@@ -53,7 +54,7 @@ public class LP
         LPMatrix Axb = new LPMatrix();
 
         // split lines by carriage return and line feed
-        String[] lines = fileString.split("/r/n");
+        String[] lines = fileString.split("(\r\n|\n)");
 
         // need at least 2 lines to have an LP problem
         assert lines.length>2;
@@ -62,7 +63,7 @@ public class LP
         for(int i=0; i < lines.length;i++)
         {
             // split line by tab
-            String[] splitLine = lines[i].split("\t");
+            String[] splitLine = lines[i].split("(\t)");
 
             // if no elements in the line, move to next line
             if(splitLine.length<=0)
@@ -114,11 +115,11 @@ public class LP
 
             if(constraint)
             {
-                Axb.constraints.add((Constraint)equation);
+                Axb.constraints.add(equation);
             }
             else
             {
-                Axb.bfs = (Bfs)equation;
+                Axb.bfs = equation;
             }
         }
         return  Axb;
