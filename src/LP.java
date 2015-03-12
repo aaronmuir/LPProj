@@ -26,7 +26,10 @@ public class LP
                 Axb = convertToMatrix(fileString);
 
                 // invoke solving algorithm
-
+                    // is bfs
+                        // simplex
+                    /// else
+                        // two phase simplex
 
                 // output results
                 System.out.println("results");
@@ -79,7 +82,7 @@ public class LP
             for(int j=0; j<splitLine.length;j++)
             {
                 // potential parameter in equation
-                String param = splitLine[i];
+                String param = splitLine[j].trim();
                 try
                 {
                     // if the element is a number, add it to the equation
@@ -110,7 +113,6 @@ public class LP
             if(negate)
             {
                 equation.negate();
-                negate = false;
             }
 
             if(constraint)
@@ -119,6 +121,8 @@ public class LP
             }
             else
             {
+                // since bfs, add zero for b
+                equation.insertElement(0.0);
                 Axb.bfs = equation;
             }
         }
