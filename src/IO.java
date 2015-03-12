@@ -10,6 +10,12 @@ import java.io.IOException;
  */
 public class IO
 {
+    /**
+     * Reads the contents of file into a string variable. crlf delimited
+     *
+     * @param fileLocation file path to the text file
+     * @return
+     */
     public String readFile(String fileLocation)
     {
         String fileString="";

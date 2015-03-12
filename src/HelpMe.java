@@ -5,6 +5,9 @@
  */
 public class HelpMe
 {
+    /**
+     * Outputs the help documentation to the screen
+     */
     public static void showHelp()
     {
         System.out.println("");
