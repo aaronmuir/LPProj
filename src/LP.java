@@ -9,6 +9,11 @@ public class LP
     private static String fileLocation;
     private static LPMatrix Axb;
 
+    /**
+     * Entry point
+     *
+     * @param args command line arguments
+     */
     public static void main(String args[])
     {
         try
@@ -25,7 +30,7 @@ public class LP
                 // parse string into standard form
                 Axb = convertToMatrix(fileString);
 
-                // invoke solving algorithm
+                // parse solving algorithm
                     // is bfs
                         // simplex
                     /// else
@@ -62,70 +67,56 @@ public class LP
         // need at least 2 lines to have an LP problem
         assert lines.length>2;
 
-        // parse each line into a new row
+        // parse each line into a new equation row
         for(int i=0; i < lines.length;i++)
         {
-            // split line by tab
-            String[] splitLine = lines[i].split("(\t)");
-
-            // if no elements in the line, move to next line
-            if(splitLine.length<=0)
-                continue;
-
-            // use elements to form equation
-            AugRow equation = new AugRow();
-
-            // assume no need to negate the equation
-            boolean negate = false;
-            boolean constraint = false;
-
-            for(int j=0; j<splitLine.length;j++)
-            {
-                // potential parameter in equation
-                String param = splitLine[j].trim();
-                try
-                {
-                    // if the element is a number, add it to the equation
-                    Double val = Double.parseDouble(param);
-                    equation.insertElement(val);
-                }
-                catch (NumberFormatException ex)
-                {
-                    // handle NaN
-                    if(param.equals("<="))
-                    {
-                        // max constraint - add slack var
-                        constraint = true;
-                    }
-                    else if(param.equals(">="))
-                    {
-                        // min constraint - add slack var
-                        constraint = true;
-                        // negate
-                        negate = true;
-                    }
-                    else
-                    {
-                        assert false:"Unknown element in equation "+i+" tab "+j;
-                    }
-                }
-            }
-            if(negate)
-            {
-                equation.negate();
-            }
-
-            if(constraint)
-            {
-                Axb.constraints.add(equation);
-            }
-            else
-            {
-                // since bfs, add zero for b
-                equation.insertElement(0.0);
-                Axb.bfs = equation;
-            }
+            parseLine(Axb, lines[i], i);
         }
         return  Axb;
+    }
+
+    /**
+     * Parse line of text into a row in the matrix
+     *
+     * @param axb Matrix
+     * @param line Line of text
+     * @param i Index of line in file
+     */
+    private static void parseLine(LPMatrix axb, String line, int i)
+    {
+        // split line by tab
+        String[] splitLine = line.split("(\t)");
+
+        // if no elements in the line, move to next line
+        if(splitLine.length<=0)
+            return;
+
+        // use elements to form augmented row
+        AugRow row = new AugRow();
+
+        // parse parameters into equation (augmented row)
+        for(int j=0; j<splitLine.length;j++)
+        {
+            String param = splitLine[j].trim();
+            Parameter parameter = new Parameter(i, j, row, param).parse();
+        }
+
+        // negate entire equation
+        if(row.getNegate())
+        {
+            row.negate();
+        }
+
+        // constraint or origin bfs
+        if(row.getConstraint())
+        {
+            axb.constraints.add(row);
+        }
+        else
+        {
+            // since bfs, add zero for b
+            row.insertElement(0.0);
+            axb.bfs = row;
+        }
     }
 }

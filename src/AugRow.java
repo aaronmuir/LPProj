@@ -13,10 +13,14 @@ public class AugRow
 {
     private ArrayList<Double> Aj;
     private Double b;
+    private Boolean negate;
+    private Boolean constraint;
 
     AugRow()
     {
         Aj = new ArrayList<Double>();
+        constraint = false;
+        negate = false;
     }
 
     /**
@@ -76,5 +80,25 @@ public class AugRow
             Aj.set(i, Aj.get(i).doubleValue()*-1.0);
         }
         b = b.doubleValue() * -1.0;
+    }
+
+    public Boolean getConstraint()
+    {
+        return constraint;
+    }
+
+    public void setConstraint(Boolean constraint)
+    {
+        this.constraint = constraint;
+    }
+
+    public Boolean getNegate()
+    {
+        return negate;
+    }
+
+    public void setNegate(Boolean negate)
+    {
+        this.negate = negate;
     }
 }
