@@ -7,7 +7,7 @@ public class LP
 {
     private static String fileString;
     private static String fileLocation;
-    private static Matrix Axb;
+    private static Matrix initMatrix;
 
     /**
      * Entry point
@@ -28,7 +28,7 @@ public class LP
                 fileString = io.readFile(fileLocation);
 
                 // parse string into standard form
-                Axb = convertToMatrix(fileString);
+                initMatrix = convertToMatrix(fileString);
 
                 // parse solving algorithm
                     // is bfs
