@@ -47,8 +47,7 @@ public class LP
         }
         catch(Exception ex)
         {
-            System.out.println(ex.getMessage().toString());
-            System.out.println(ex.getStackTrace().toString());
+            ExceptionHandler.Handle(ex);
         }
     }
 
