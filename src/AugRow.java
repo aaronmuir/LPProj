@@ -59,6 +59,12 @@ public class AugRow
     {
         return Aj;
     }
+
+    /**
+     * Equality comparison
+     * @param row
+     * @return
+     */
     public boolean Equals(AugRow row)
     {
         if(!row.Aj.equals(Aj))
@@ -80,6 +86,30 @@ public class AugRow
             Aj.set(i, Aj.get(i).doubleValue()*-1.0);
         }
         b = b.doubleValue() * -1.0;
+    }
+
+    /**
+     * Returns augmented row of elements in string format
+     * @return
+     */
+    public String toString()
+    {
+        String result = "";
+        for(int i=0; i<Aj.size();i++)
+        {
+            result += "\t" + Aj.get(i).toString();
+        }
+        result += "\t |" + b.toString();
+        return result;
+    }
+
+    /**
+     * Returns the value of b - last element in the augmented row.
+     * @return
+     */
+    public Double getB()
+    {
+        return  b;
     }
 
     public Boolean getConstraint()
