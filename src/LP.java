@@ -97,7 +97,7 @@ public class LP
         for(int j=0; j<splitLine.length;j++)
         {
             String param = splitLine[j].trim();
-            Parameter parameter = new Parameter(i, j, row, param).parse();
+            TextParam parameter = new TextParam(i, j, row, param).parse();
         }
 
         // negate entire equation

@@ -3,7 +3,7 @@
  * CS 309
  * LP Project
  */
-public class Parameter
+public class TextParam
 {
     private int i;
     private int j;
@@ -18,7 +18,7 @@ public class Parameter
      * @param row augmented row to store parameter in
      * @param param ASCII representation of param
      */
-    public Parameter(int i,int j, AugRow row, String param)
+    public TextParam(int i, int j, AugRow row, String param)
     {
         this.i = i;
         this.j = j;
@@ -31,7 +31,7 @@ public class Parameter
      *
      * @return
      */
-    public Parameter parse()
+    public TextParam parse()
     {
         try
         {
