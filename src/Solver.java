@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Solver
 {
-    private Matrix original;
+    private Matrix origin;
     private ArrayList<Matrix> tables;
     private ArrayList<Solution> solutions;
 
@@ -26,7 +26,7 @@ public class Solver
     {
         tables = new ArrayList<Matrix>();
         solutions = new ArrayList<Solution>();
-        this.original = original;
+        this.origin = original;
     }
 
     /**
@@ -37,6 +37,9 @@ public class Solver
         try
         {
             this.determineSolveMethod();
+
+            // copy the origin so it is preserved
+            tables.add(origin.copy());
 
             if (solveMethod == Method.simplex)
             {
@@ -58,7 +61,12 @@ public class Solver
      */
     private void simplex()
     {
+        // get the current matrix
+        Matrix current = tables.get(tables.size()-1);
 
+        // todo implement simplex algorithm
+
+            // if resulting solution is feasible & basic, store the solution
     }
 
     /**
@@ -66,13 +74,23 @@ public class Solver
      */
     private void twoPhaseSimplex()
     {
+        // get the current matrix
+        Matrix current = tables.get(tables.size()-1);
 
+        // create an auxiliary row & column in the current matrix
+        current.createAuxiliary();
+
+        // solve auxiliary function
+        // TODO solve aux
+        // create new matrix for each solve iteration
+
+        // todo remove aux and store for simplex
     }
 
     private void determineSolveMethod()
     {
         // is origin bfs?
-        if(original.getSolution().isBfs())
+        if(origin.getSolution().isBfs())
             solveMethod = Method.simplex;
         else
             solveMethod = Method.twoPhaseSimplex;
