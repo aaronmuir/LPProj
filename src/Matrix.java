@@ -61,21 +61,6 @@ public class Matrix
     }
 
     /**
-     * Return the matrix in string format
-     *
-     * @return string formatted matrix
-     */
-    public String toString()
-    {
-        String result = "";
-        for(int i=0; i < rows.size();i++)
-        {
-            result += rows.get(i).toString();
-        }
-        return result;
-    }
-
-    /**
      * @return the solution to the matrix
      */
     public Solution getSolution()
@@ -185,5 +170,36 @@ public class Matrix
     {
         //TODO remove the auxiliary from the matrix
         hasAuxiliary = false;
+    }
+
+    /**
+     *
+     * @return string formatted matrix
+     */
+    public String toString()
+    {
+        String result = "";
+        for(int i=0; i < rows.size();i++)
+        {
+            result += rows.get(i).toString();
+        }
+        return result;
+    }
+
+    /**
+     *
+     * @return copy of this matrix
+     */
+    public Matrix copy()
+    {
+        Matrix copy = new Matrix();
+
+        for(AugRow row : this.rows)
+        {
+            copy.rows.add(row);
+        }
+        copy.hasAuxiliary = this.hasAuxiliary;
+        copy.slackCount = this.slackCount;
+        return copy;
     }
 }

@@ -87,6 +87,17 @@ public class AugRow
         return true;
     }
 
+    public AugRow Copy()
+    {
+        AugRow copy = new AugRow();
+        for(Double d : this.elements)
+        {
+            copy.elements.add(d);
+        }
+        copy.constraint = this.constraint;
+        copy.negate = this.negate;
+        return copy;
+    }
     /**
      * Negates all variables
      */
