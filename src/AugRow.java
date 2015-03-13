@@ -66,10 +66,8 @@ public class AugRow
 
     /**
      * Removes a value the front of the row of elements
-     *
-     * @param val
      */
-    public void removeFront(Double val)
+    public void removeFront()
     {
         elements.remove(0);
     }

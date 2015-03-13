@@ -144,12 +144,6 @@ public class Matrix
     }
 
     /**
-     *
-     * @return the number of slack variables used
-     */
-    public int getSlackCount(){ return slackCount; }
-
-    /**
      * Auxiliary row & column functions
      */
     public AugRow getAuxiliaryRow()
@@ -165,12 +159,46 @@ public class Matrix
     }
     public void createAuxiliary()
     {
-        //TODO create auxiliary
-        hasAuxiliary = true;
+        try
+        {
+            if(!isValid())
+                throw new Exception("Matrix format is not valid!");
+
+            // add the new aux with x0=-1 in the new column and zero all in other columns
+            AugRow aux = new AugRow();
+            aux.addElement(-1.0);
+            for(int i=0;i<getColumnSize();i++)
+            {
+                aux.addElement(0.0);
+            }
+
+            // insert x0=0 if the row is the obj function, otherwise x0=-1
+            for (AugRow row:rows)
+            {
+                if(row.Equals(getObjectiveRow()))
+                    row.insertFront(0.0);
+                else
+                    row.insertFront(-1.0);
+            }
+            hasAuxiliary = true;
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
     }
     public void removeAuxiliary()
     {
-        //TODO remove the auxiliary from the matrix
+        assert hasAuxiliary;
+
+        // remove aux row
+        rows.remove(0);
+
+        // remove x0 column
+        for(AugRow row:rows)
+        {
+            row.removeFront();
+        }
         hasAuxiliary = false;
     }
 
@@ -181,6 +209,48 @@ public class Matrix
     public boolean isOrigin()
     {
         return getSolution().isOrigin();
+    }
+
+    /**
+     * @return the N number of columns in the matrix
+     */
+    public int getColumnSize()
+    {
+        return getObjectiveRow().size();
+    }
+
+    /**
+     * @return the M number of rows in the matrix
+     */
+    public int getRowSize()
+    {
+        return rows.size();
+    }
+
+    /**
+     * @return the number of slack variables used
+     */
+    public int getSlackCount(){ return slackCount; }
+
+    /**
+     * @return the number of basic variables used
+     */
+    public int getBasicCount(){ return getColumnSize()-slackCount; }
+
+    /**
+     * @return whether or not the matrix is valid
+     */
+    public boolean isValid()
+    {
+        // column sizes should be consistent across rows
+        int objCols = getColumnSize();
+        for(AugRow r:rows)
+        {
+            if(r.size()!=objCols)
+                return false;
+        }
+
+        return true;
     }
 
     /**
