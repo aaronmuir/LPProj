@@ -22,7 +22,7 @@ public class Solution
      *
      * @return whether or not the current solution is a bfs
      */
-    private Boolean isBfs()
+    public Boolean isBfs()
     {
         return isBasic()&& isFeasible();
     }
@@ -31,7 +31,7 @@ public class Solution
      * Returns whether or not the current solution is basic
      *
      */
-    private Boolean isBasic()
+    public Boolean isBasic()
     {
         int count = 0;
         for(int i=0;i<elements.size();i++)
@@ -46,7 +46,7 @@ public class Solution
      * Returns whether or not the current solution is feasible
      *
      */
-    private Boolean isFeasible()
+    public Boolean isFeasible()
     {
         int count = 0;
         for(int i=0;i<elements.size();i++)

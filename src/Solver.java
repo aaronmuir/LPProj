@@ -9,9 +9,7 @@ public class Solver
 {
     private Matrix original;
     private ArrayList<Matrix> tables;
-    private ArrayList<AugRow> solutions;
-    private AugRow optimal;
-    private Method method;
+    private ArrayList<Solution> solutions;
 
     private enum Method
     {
@@ -19,16 +17,16 @@ public class Solver
         twoPhaseSimplex,
         dualSimplex
     }
+    private Method solveMethod;
 
     /**
      * LP solving algorithms
      */
-    public Solver()
+    public Solver(Matrix original)
     {
         tables = new ArrayList<Matrix>();
-        solutions = new ArrayList<AugRow>();
-        optimal = new AugRow();
-        method = Method.simplex;
+        solutions = new ArrayList<Solution>();
+
     }
 
     /**
@@ -37,12 +35,16 @@ public class Solver
      */
     public Double getObjValue()
     {
-        return optimal.getB()*-1.0;
+        // TODO get objective value from matrix
+        return 0.0;// optimal.getB()*-1.0;
     }
 
     private void setMethod()
     {
         // is origin bfs?
-
+        if(original.getSolution().isBfs())
+            solveMethod = Method.simplex;
+        else
+            solveMethod = Method.twoPhaseSimplex;
     }
 }

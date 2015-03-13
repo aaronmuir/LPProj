@@ -12,17 +12,6 @@ import java.util.ArrayList;
 public class Matrix
 {
     private ArrayList<AugRow> rows;
-
-    public boolean isHasAuxiliary()
-    {
-        return hasAuxiliary;
-    }
-
-    public void setHasAuxiliary(boolean hasAuxiliary)
-    {
-        this.hasAuxiliary = hasAuxiliary;
-    }
-
     private boolean hasAuxiliary;
 
     // slack count
@@ -131,7 +120,7 @@ public class Matrix
         {
             Double val = rows.get(j).getElement(i);
 
-            if (val == 0)
+            if (val == 0.0)
                 zeroCount++;
             else if(val != 1.0)
                 return -1;
@@ -158,14 +147,13 @@ public class Matrix
         this.rows = rows;
     }
 
-    public AugRow getAuxiliary()
+    public AugRow getAuxiliaryRow()
     {
         if(hasAuxiliary)
             return rows.get(0);
         else
             return null;
     }
-
     public AugRow getObjectiveRow()
     {
         if(hasAuxiliary)
@@ -173,9 +161,18 @@ public class Matrix
         else
             return rows.get(0);
     }
-
     public void setObjectiveRow(AugRow objectiveRow)
     {
         rows.add(0,objectiveRow);
+    }
+
+    public boolean hasAuxiliary()
+    {
+        return hasAuxiliary;
+    }
+    public void createAuxiliary()
+    {
+        //TODO create auxiliary
+        this.hasAuxiliary = hasAuxiliary;
     }
 }
