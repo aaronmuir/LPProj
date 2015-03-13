@@ -26,20 +26,50 @@ public class Solver
     {
         tables = new ArrayList<Matrix>();
         solutions = new ArrayList<Solution>();
+        this.original = original;
+    }
+
+    /**
+     * Solve the LP problem
+     */
+    public void solve()
+    {
+        try
+        {
+            this.determineSolveMethod();
+
+            if (solveMethod == Method.simplex)
+            {
+                simplex();
+            } else if (solveMethod == Method.twoPhaseSimplex)
+            {
+                twoPhaseSimplex();
+            } else
+                throw new Exception("Unexpected solve method being utilized");
+        }
+        catch(Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
+    }
+
+    /**
+     * simplex method of solving
+     */
+    private void simplex()
+    {
 
     }
 
     /**
-     * Returns the negation of the optimal solution's value.
-     * @return
+     * two-phase simplex method
      */
-    public Double getObjValue()
+    private void twoPhaseSimplex()
     {
-        // TODO get objective value from matrix
-        return 0.0;// optimal.getB()*-1.0;
+
     }
 
-    private void setMethod()
+    private void determineSolveMethod()
     {
         // is origin bfs?
         if(original.getSolution().isBfs())
