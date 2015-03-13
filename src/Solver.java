@@ -7,7 +7,7 @@ import java.util.ArrayList;
  */
 public class Solver
 {
-    private Matrix origin;
+    private Matrix initialSolution;
     private ArrayList<Matrix> tables;
     private ArrayList<Solution> solutions;
 
@@ -26,7 +26,7 @@ public class Solver
     {
         tables = new ArrayList<Matrix>();
         solutions = new ArrayList<Solution>();
-        this.origin = original;
+        this.initialSolution = original;
     }
 
     /**
@@ -38,8 +38,8 @@ public class Solver
         {
             this.determineSolveMethod();
 
-            // copy the origin so it is preserved
-            tables.add(origin.copy());
+            // copy the initialSolution so it is preserved
+            tables.add(initialSolution.copy());
 
             if (solveMethod == Method.simplex)
             {
@@ -89,8 +89,8 @@ public class Solver
 
     private void determineSolveMethod()
     {
-        // is origin bfs?
-        if(origin.getSolution().isBfs())
+        // does the initial solution correspond to the origin
+        if(initialSolution.getSolution().isOrigin())
             solveMethod = Method.simplex;
         else
             solveMethod = Method.twoPhaseSimplex;

@@ -60,6 +60,7 @@ public class Matrix
         rows.add(constraint);
     }
 
+
     /**
      * @return the solution to the matrix
      */
@@ -88,6 +89,7 @@ public class Matrix
         }
         return new Solution(slackCount,solution);
     }
+
 
     /**
      *
@@ -170,6 +172,15 @@ public class Matrix
     {
         //TODO remove the auxiliary from the matrix
         hasAuxiliary = false;
+    }
+
+
+    /**
+     * @return whether or not the solution corresponds to the origin
+     */
+    public boolean isOrigin()
+    {
+        return getSolution().isOrigin();
     }
 
     /**

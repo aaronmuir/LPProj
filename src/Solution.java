@@ -19,8 +19,8 @@ public class Solution
     }
 
     /**
+     * Returns whether or not the current solution is a bfs
      *
-     * @return whether or not the current solution is a bfs
      */
     public Boolean isBfs()
     {
@@ -55,5 +55,20 @@ public class Solution
                 count++;
         }
         return count==0;
+    }
+
+    /**
+     * Returns whether or not the current solution is the origin
+     *
+     */
+    public Boolean isOrigin()
+    {
+       int basicCount = elements.size()-slackVars;
+       for(int i=0;i<basicCount;i++)
+       {
+           if(elements.get(i)!=0.0)
+               return false;
+       }
+       return true;
     }
 }
