@@ -11,14 +11,14 @@ import java.util.ArrayList;
  */
 public class AugRow
 {
-    private ArrayList<Double> Aj;
-    private Double b;
+    private ArrayList<Double> elements;
+
     private Boolean negate;
     private Boolean constraint;
 
     AugRow()
     {
-        Aj = new ArrayList<Double>();
+        elements = new ArrayList<Double>();
         constraint = false;
         negate = false;
     }
@@ -29,49 +29,60 @@ public class AugRow
      *
      * @param val The value of the element to add
      */
-    public void insertElement(Double val)
+    public void addElement(Double val)
     {
-        // if b exists, move it to the last column of A
-        if(b!=null)
-            Aj.add(b);
-
-        // set b equal to the new value
-        b=new Double(val);
+        elements.add(val);
     }
 
     /**
-     * inserts a new coefficient in the last column of the row Aj
-     *  in the A matrix.
+     *
+     * @param i
+     * @return element at index i
+     */
+    public Double getElement(int i)
+    {
+        return elements.get(i);
+    }
+    /**
+     * inserts a new coefficient in the last column of the row elements
+     *  in the A matrix. Placed in the column before the augmented column.
      *
      * @param val
      */
     public void insertA(Double val)
     {
-        Aj.add(val);
+        elements.add(elements.size() - 2, val);
     }
 
     /**
-     * Gets the elements of Aj in the A matrix.
+     * inserts a value the front of the row of elements
      *
-     * @return
+     * @param val
      */
-    public ArrayList<Double> getAj(int i)
+    public void insertFront(Double val)
     {
-        return Aj;
+        elements.add(0,val);
+    }
+
+    /**
+     * Removes a value the front of the row of elements
+     *
+     * @param val
+     */
+    public void removeFront(Double val)
+    {
+        elements.remove(0);
     }
 
     /**
      * Equality comparison
-     * @param row
-     * @return
+     * @param row augmented row
+     * @return equality
      */
     public boolean Equals(AugRow row)
     {
-        if(!row.Aj.equals(Aj))
+        if(!row.elements.equals(elements))
             return  false;
-
-        if(row.b != b)
-            return false;
 
         return true;
     }
@@ -81,38 +92,44 @@ public class AugRow
      */
     public void negate()
     {
-        for(int i=0;i< Aj.size();i++)
+        for(int i=0;i< elements.size();i++)
         {
-            Aj.set(i, Aj.get(i).doubleValue()*-1.0);
+            elements.set(i, elements.get(i).doubleValue()*-1.0);
         }
-        b = b.doubleValue() * -1.0;
     }
 
     /**
-     * Returns augmented row of elements in string format
-     * @return
+     *
+     * @return augmented row of elements in string format
      */
     public String toString()
     {
         String result = "";
-        for(int i=0; i<Aj.size();i++)
+        for(int i=0; i< elements.size()-1;i++)
         {
-            result += "\t" + Aj.get(i).toString();
+            result += "\t" + elements.get(i).toString();
         }
-        result += "\t |" + b.toString();
+        // b
+        result += "\t |" + elements.get(elements.size()-1).toString();
         return result;
     }
 
+
+    public int size()
+    {
+        return elements.size();
+    }
+
     /**
-     * Returns the value of b - last element in the augmented row.
-     * @return
+     *
+     * @return the value of b - last element in the augmented row
      */
     public Double getB()
     {
-        return  b;
+        return  elements.get(elements.size()-1);
     }
 
-    public Boolean getConstraint()
+    public Boolean isConstraint()
     {
         return constraint;
     }
@@ -122,7 +139,7 @@ public class AugRow
         this.constraint = constraint;
     }
 
-    public Boolean getNegate()
+    public Boolean isNegate()
     {
         return negate;
     }

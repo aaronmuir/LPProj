@@ -102,21 +102,21 @@ public class LP
         }
 
         // negate entire equation
-        if(row.getNegate())
+        if(row.isNegate())
         {
             row.negate();
         }
 
         // constraint or origin bfs
-        if(row.getConstraint())
+        if(row.isConstraint())
         {
-            axb.constraints.add(row);
+            axb.addConstraint(row);
         }
         else
         {
             // since bfs, add zero for b
-            row.insertElement(0.0);
-            axb.bfs = row;
+            row.addElement(0.0);
+            axb.setObjectiveRow(row);
         }
     }
 }

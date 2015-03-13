@@ -7,6 +7,7 @@ import java.util.ArrayList;
  */
 public class Solver
 {
+    private Matrix original;
     private ArrayList<Matrix> tables;
     private ArrayList<AugRow> solutions;
     private AugRow optimal;
@@ -39,5 +40,9 @@ public class Solver
         return optimal.getB()*-1.0;
     }
 
+    private void setMethod()
+    {
+        // is origin bfs?
 
+    }
 }

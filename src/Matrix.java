@@ -7,22 +7,31 @@ import java.util.ArrayList;
  */
 
 /**
- * Matrix containing an original bfs and multiple constraints
+ * Matrix containing an original objectiveRow and multiple constraints
  */
 public class Matrix
 {
+    private ArrayList<AugRow> rows;
 
-    AugRow bfs;
-    AugRow auxiliary;
-    ArrayList<AugRow> constraints;
+    public boolean isHasAuxiliary()
+    {
+        return hasAuxiliary;
+    }
+
+    public void setHasAuxiliary(boolean hasAuxiliary)
+    {
+        this.hasAuxiliary = hasAuxiliary;
+    }
+
+    private boolean hasAuxiliary;
 
     // slack count
-    int slackCount;
+    private int slackCount;
 
     Matrix()
     {
-        constraints = new ArrayList<AugRow>();
-        int slackCount = 0;
+        rows = new ArrayList<AugRow>();
+        slackCount = 0;
     }
 
     /**
@@ -32,25 +41,34 @@ public class Matrix
      */
     public void addSlack(AugRow constraint)
     {
-        assert constraints.indexOf(constraint)!=-1:"Constraint does not exist - can't add slack var";
+        assert rows.indexOf(constraint)!=-1:"Constraint does not exist - can't add slack var";
 
         slackCount++;
-        // add zero to all other elements
-        bfs.insertA(0.0);
 
-        for(int i = 0; i < constraints.size();i++)
+        // add zero to all other elements
+        for(int i = 0; i < rows.size();i++)
         {
-            if(constraints.get(i).equals(constraint))
+            if(rows.get(i).equals(constraint))
             {
                 // insert new xi slack var to constraint
-                constraints.get(i).insertA(1.0);
+                rows.get(i).insertA(1.0);
             }
             else
             {
                 // insert zero at xi
-                constraints.get(i).insertA(0.0);
+                rows.get(i).insertA(0.0);
             }
         }
+    }
+
+    /**
+     * Add a constraint to the matrix
+     *
+     * @param constraint
+     */
+    public void addConstraint(AugRow constraint)
+    {
+        rows.add(constraint);
     }
 
     /**
@@ -61,12 +79,103 @@ public class Matrix
     public String toString()
     {
         String result = "";
-        result += bfs.toString();
-        result += "------------";
-        for(int i=0; i < constraints.size();i++)
+        for(int i=0; i < rows.size();i++)
         {
-            result += constraints.get(i).toString();
+            result += rows.get(i).toString();
         }
         return result;
+    }
+
+    /**
+     * @return the current solution
+     */
+    public Solution getSolution()
+    {
+        ArrayList<Double> solution = new ArrayList<Double>();
+
+        assert(rows.size()>0);
+
+        int n = rows.get(0).size();
+        int m = rows.size();
+
+        // move through each column (Ai) - exclude the last(b) column
+        for(int i = 0; i < n-1;i++)
+        {
+            // if identity column then add the value of b to the solution, else zero
+            int identity = getIdentity(i);
+            if(identity!=-1)
+            {
+                solution.add(rows.get(identity).getB()); // value of b
+            }
+            else
+            {
+                solution.add(0.0);
+            }
+        }
+        return new Solution(slackCount,solution);
+    }
+
+    /**
+     *
+     * @param i
+     * @return returns the row j that corresponds to the identity (1) in column i.
+     *          otherwise returns -1;
+     */
+    public int getIdentity(int i)
+    {
+        int zeroCount = 0;
+        int identity = -1;
+
+        // move through each row (Aij)
+        for(int j = 0; j < rows.size();j++)
+        {
+            Double val = rows.get(j).getElement(i);
+
+            if (val == 0)
+                zeroCount++;
+            else if(val != 1.0)
+                return -1;
+            else
+                identity = j;
+        }
+
+        // there should be m-1 zeros and identity row must exist
+        if(zeroCount == rows.size() - 1)
+            return identity;
+        else
+            return -1;
+    }
+
+    public int getSlackCount(){ return slackCount; }
+
+    public ArrayList<AugRow> getRows()
+    {
+        return rows;
+    }
+
+    public void setRows(ArrayList<AugRow> rows)
+    {
+        this.rows = rows;
+    }
+
+    public AugRow getAuxiliary()
+    {
+        if(hasAuxiliary)
+            return rows.get(0);
+        else
+            return null;
+    }
+
+    public AugRow getObjectiveRow()
+    {
+        if(hasAuxiliary)
+            return rows.get(1);
+        else
+            return rows.get(0);
+    }
+
+    public void setObjectiveRow(AugRow objectiveRow)
+    {
+        rows.add(0,objectiveRow);
     }
 }

@@ -37,7 +37,7 @@ public class Parameter
         {
             // if the element is a number, add it to the equation
             Double val = Double.parseDouble(param);
-            equation.insertElement(val);
+            equation.addElement(val);
         }
         catch (NumberFormatException ex)
         {
