@@ -76,7 +76,7 @@ public class Matrix
     }
 
     /**
-     * @return the current solution
+     * @return the solution to the matrix
      */
     public Solution getSolution()
     {
@@ -135,26 +135,16 @@ public class Matrix
             return -1;
     }
 
-    public int getSlackCount(){ return slackCount; }
-
-    public ArrayList<AugRow> getRows()
+    /**
+     *
+     * @return the negation of the objective function's value.
+     */
+    public Double getObjValue()
     {
-        return rows;
+        AugRow obj = getObjectiveRow();
+        return obj.getB()*-1.0;
     }
-
-    public void setRows(ArrayList<AugRow> rows)
-    {
-        this.rows = rows;
-    }
-
-    public AugRow getAuxiliaryRow()
-    {
-        if(hasAuxiliary)
-            return rows.get(0);
-        else
-            return null;
-    }
-    public AugRow getObjectiveRow()
+    private AugRow getObjectiveRow()
     {
         if(hasAuxiliary)
             return rows.get(1);
@@ -166,6 +156,22 @@ public class Matrix
         rows.add(0,objectiveRow);
     }
 
+    /**
+     *
+     * @return the number of slack variables used
+     */
+    public int getSlackCount(){ return slackCount; }
+
+    /**
+     * Auxiliary row & column functions
+     */
+    public AugRow getAuxiliaryRow()
+    {
+        if(hasAuxiliary)
+            return rows.get(0);
+        else
+            return null;
+    }
     public boolean hasAuxiliary()
     {
         return hasAuxiliary;
@@ -173,6 +179,11 @@ public class Matrix
     public void createAuxiliary()
     {
         //TODO create auxiliary
-        this.hasAuxiliary = hasAuxiliary;
+        hasAuxiliary = true;
+    }
+    public void removeAuxiliary()
+    {
+        //TODO remove the auxiliary from the matrix
+        hasAuxiliary = false;
     }
 }
