@@ -7,7 +7,7 @@ public class LP
 {
     private static String fileString;
     private static String fileLocation;
-    private static LPMatrix Axb;
+    private static Matrix Axb;
 
     /**
      * Entry point
@@ -57,9 +57,9 @@ public class LP
      *
      * @param fileString lines of text that specify the linear system
      */
-    public static LPMatrix convertToMatrix(String fileString)
+    public static Matrix convertToMatrix(String fileString)
     {
-        LPMatrix Axb = new LPMatrix();
+        Matrix Axb = new Matrix();
 
         // split lines by carriage return and line feed
         String[] lines = fileString.split("(\r\n|\n)");
@@ -82,7 +82,7 @@ public class LP
      * @param line Line of text
      * @param i Index of line in file
      */
-    private static void parseLine(LPMatrix axb, String line, int i)
+    private static void parseLine(Matrix axb, String line, int i)
     {
         // split line by tab
         String[] splitLine = line.split("(\t)");
