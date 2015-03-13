@@ -5,39 +5,21 @@
  */
 public class TextParam
 {
-    private int i;
-    private int j;
-    private AugRow equation;
-    private String param;
-
     /**
-     * Parameter from text file
+     * Parse Parameter from text file
      *
      * @param i row index
      * @param j col index
      * @param row augmented row to store parameter in
      * @param param ASCII representation of param
      */
-    public TextParam(int i, int j, AugRow row, String param)
-    {
-        this.i = i;
-        this.j = j;
-        this.equation = row;
-        this.param = param;
-    }
-
-    /**
-     * Parse the text parameter into the equation
-     *
-     * @return
-     */
-    public TextParam parse()
+    public static void parse(int i, int j, AugRow row, String param)
     {
         try
         {
-            // if the element is a number, add it to the equation
+            // if the element is a number, add it to the row
             Double val = Double.parseDouble(param);
-            equation.addElement(val);
+            row.addElement(val);
         }
         catch (NumberFormatException ex)
         {
@@ -45,20 +27,19 @@ public class TextParam
             if(param.equals("<="))
             {
                 // max constraint - add slack var
-                equation.setConstraint(true);
+                row.setConstraint(true);
             }
             else if(param.equals(">="))
             {
                 // min constraint - add slack var
-                equation.setConstraint(true);
+                row.setConstraint(true);
                 // negate
-                equation.setNegate(true);
+                row.setNegate(true);
             }
             else
             {
-                assert false:"Unknown element in equation "+i+" tab "+j;
+                assert false:"Unknown element in row "+i+" tab "+j;
             }
         }
-        return this;
     }
 }
