@@ -35,14 +35,21 @@ public class AugRow
     }
 
     /**
-     *
-     * @param i
      * @return element at index i
      */
     public Double getElement(int i)
     {
         return elements.get(i);
     }
+
+    /**
+     * set the value of element at index i
+     */
+    public void setElement(int i,Double val)
+    {
+        elements.set(i, val);
+    }
+
     /**
      * inserts a new coefficient in the last column of the row elements
      *  in the A matrix. Placed in the column before the augmented column.
@@ -85,7 +92,7 @@ public class AugRow
         return true;
     }
 
-    public AugRow Copy()
+    public AugRow copy()
     {
         AugRow copy = new AugRow();
         for(Double d : this.elements)
