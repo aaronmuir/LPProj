@@ -71,4 +71,23 @@ public class Solution
        }
        return true;
     }
+
+    /**
+     * returns the solution in string format
+     */
+    @Override
+    public String toString()
+    {
+        String s = "";
+        int i=1;
+        for(Double d:elements)
+        {
+            s +=" x"+i+"="+d.toString();
+            if(i!=elements.size())
+                s+=", ";
+
+            i++;
+        }
+        return s;
+    }
 }
