@@ -24,17 +24,16 @@ public class LP
                 fileLocation = args[0];
 
                 // read input file into string
-                IO io = new IO();
-                fileString = io.readFile(fileLocation);
+                fileString = IO.readFile(fileLocation);
 
                 // parse string into standard form
                 initMatrix = convertToMatrix(fileString);
 
-                // parse solving algorithm
-                    // is bfs
-                        // simplex
-                    /// else
-                        // two phase simplex
+                // configure a printer
+                Printer printer = new Printer(Printer.Style.Console);
+
+                // solve matrix
+                Solver solver = new Solver(initMatrix,printer);
 
                 // output results
                 System.out.println("results");

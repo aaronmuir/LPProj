@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 
 /**
  * Aaron Muir
@@ -16,7 +13,7 @@ public class IO
      * @param fileLocation file path to the text file
      * @return
      */
-    public String readFile(String fileLocation)
+    public static String readFile(String fileLocation)
     {
         String fileString="";
 
@@ -32,13 +29,37 @@ public class IO
             }
             fileString = sb.toString();
 
-        } catch (FileNotFoundException e)
+        }
+        catch (FileNotFoundException e)
         {
-            e.printStackTrace();
-        } catch (IOException e)
+            ExceptionHandler.Handle(e);
+        }
+        catch(IOException e)
         {
-            e.printStackTrace();
+            ExceptionHandler.Handle(e);
         }
         return fileString;
+    }
+
+    /**
+     * Write the text to a file at fileLocation
+     *
+     * @param fileLocation
+     * @param text
+     */
+    public static void writeFile(String fileLocation, String text)
+    {
+        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation)))
+        {
+            bw.write(text);
+        }
+        catch(FileNotFoundException e)
+        {
+            ExceptionHandler.Handle(e);
+        }
+        catch(IOException e)
+        {
+            ExceptionHandler.Handle(e);
+        }
     }
 }
