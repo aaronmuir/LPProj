@@ -69,12 +69,10 @@ public class Matrix
         ArrayList<Double> solution = new ArrayList<Double>();
 
         assert(rows.size()>0);
-
-        int n = rows.get(0).size();
-        int m = rows.size();
+        assert isValid();
 
         // move through each column (Ai) - exclude the last(b) column
-        for(int i = 0; i < n-1;i++)
+        for(int i = 0; i < getColumnSize()-1;i++)
         {
             // if identity column then add the value of b to the solution, else zero
             int identity = getIdentity(i);
@@ -180,7 +178,7 @@ public class Matrix
             // insert x0=0 if the row is the obj function, otherwise x0=-1
             for (AugRow row:rows)
             {
-                if(row.Equals(getObjectiveRow()))
+                if(row.equals(getObjectiveRow()))
                     row.insertFront(0.0);
                 else
                     row.insertFront(-1.0);

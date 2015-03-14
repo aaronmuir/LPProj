@@ -13,6 +13,6 @@ public class ExceptionHandler
     public static void Handle(Exception ex)
     {
         System.out.println(ex.getMessage());
-        System.out.println(ex.getStackTrace());
+        //System.out.println(ex.getStackTrace());
     }
 }

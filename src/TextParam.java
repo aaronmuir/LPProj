@@ -26,15 +26,22 @@ public class TextParam
             // handle NaN
             if(param.equals("<="))
             {
-                // max constraint - add slack var
+                // max constraint
                 row.setConstraint(true);
+                row.setNeedsSlack(true);
             }
             else if(param.equals(">="))
             {
-                // min constraint - add slack var
+                // min constraint
                 row.setConstraint(true);
+                row.setNeedsSlack(true);
                 // negate
                 row.setNegate(true);
+            }
+            else if(param.equals("=="))
+            {
+                row.setConstraint(true);
+                row.setNeedsSlack(false);
             }
             else
             {

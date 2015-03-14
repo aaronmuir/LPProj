@@ -36,7 +36,7 @@ public class LP
                 Solver solver = new Solver(initMatrix,printer);
 
                 // output results
-                System.out.println("results");
+                solver.PrintResults();
             }
             else
             {
@@ -70,6 +70,15 @@ public class LP
         {
             parseLine(Axb, lines[i], i);
         }
+
+        // add slack vars
+        for(int j=0;j<Axb.getRowSize();j++)
+        {
+            if(Axb.getRow(j).isConstraint())
+                Axb.addSlack(Axb.getRow(j));
+
+        }
+
         return  Axb;
     }
 

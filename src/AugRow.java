@@ -15,7 +15,7 @@ public class AugRow
 
     private Boolean negate;
     private Boolean constraint;
-
+    private Boolean needsSlack;
     AugRow()
     {
         elements = new ArrayList<Double>();
@@ -58,7 +58,7 @@ public class AugRow
      */
     public void insertA(Double val)
     {
-        elements.add(elements.size() - 2, val);
+        elements.add(elements.size() - 1, val);
     }
 
     /**
@@ -84,7 +84,7 @@ public class AugRow
      * @param row augmented row
      * @return equality
      */
-    public boolean Equals(AugRow row)
+    public boolean equals(AugRow row)
     {
         if(!row.elements.equals(elements))
             return  false;
@@ -126,7 +126,7 @@ public class AugRow
             result += "\t" + elements.get(i).toString();
         }
         // b
-        result += "\t |" + elements.get(elements.size()-1).toString();
+        result += "\t |" + elements.get(elements.size()-1).toString() + "\r\n";
         return result;
     }
 
@@ -163,5 +163,15 @@ public class AugRow
     public void setNegate(Boolean negate)
     {
         this.negate = negate;
+    }
+
+    public Boolean getNeedsSlack()
+    {
+        return needsSlack;
+    }
+
+    public void setNeedsSlack(Boolean needsSlack)
+    {
+        this.needsSlack = needsSlack;
     }
 }

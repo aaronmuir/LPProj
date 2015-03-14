@@ -15,6 +15,7 @@ public class Solution
     {
         this.slackVars = slackVars;
 
+        this.elements = new ArrayList<Double>();
         for(Double d: elements) this.elements.add(d);
     }
 
