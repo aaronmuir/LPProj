@@ -128,7 +128,12 @@ public class Matrix
      */
     public Double getObjValue()
     {
-        AugRow obj = getObjectiveRow();
+        AugRow obj;
+        if(hasAuxiliary)
+            obj = getAuxiliaryRow();
+        else
+            obj = getObjectiveRow();
+
         return obj.getB()*-1.0;
     }
     private AugRow getObjectiveRow()
@@ -204,6 +209,27 @@ public class Matrix
 
 
     /**
+     * if all values in Ai0 are less than or equal to zero, then
+     * the objective function is optimal
+     *
+     * @return whether or not the objective function is optimal
+     */
+    public boolean isOptimal()
+    {
+        AugRow firstRow = rows.get(0);
+
+        assert firstRow !=null;
+
+        // do not include b column in determination
+        for(int i=0;i<getColumnSize()-1;i++)
+        {
+            if(firstRow.getElement(i)>0)
+                return false;
+        }
+        return true;
+    }
+
+    /**
      * @return whether or not the solution corresponds to the origin
      */
     public boolean isOrigin()
@@ -228,11 +254,6 @@ public class Matrix
     }
 
     /**
-     * @return the number of slack variables used
-     */
-    public int getSlackCount(){ return slackCount; }
-
-    /**
      * @return the number of basic variables used
      */
     public int getBasicCount(){ return getColumnSize()-slackCount; }
@@ -251,6 +272,38 @@ public class Matrix
         }
 
         return true;
+    }
+
+    /**
+     * Get the value of element in row j column i
+     * @param i
+     * @param j
+     * @return
+     */
+    public Double getValue(int i,int j)
+    {
+        return rows.get(j).getElement(i);
+    }
+
+    /**
+     * Get the value of element in row j column i
+     * @param i
+     * @param j
+     * @return
+     */
+    public void setValue(int i,int j,Double val)
+    {
+        rows.get(j).setElement(i,val);
+    }
+
+    /**
+     *
+     * @param j
+     * @return the row at index j
+     */
+    public AugRow getRow(int j)
+    {
+        return rows.get(j);
     }
 
     /**
@@ -277,7 +330,7 @@ public class Matrix
 
         for(AugRow row : this.rows)
         {
-            copy.rows.add(row);
+            copy.rows.add(row.copy());
         }
         copy.hasAuxiliary = this.hasAuxiliary;
         copy.slackCount = this.slackCount;
