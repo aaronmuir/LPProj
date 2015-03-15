@@ -118,6 +118,10 @@ public class Solver
         // create an auxiliary row & column in the current matrix
         current.createAuxiliary();
 
+        printer.Print("Auxiliary Created\r\n");
+        printer.Print(current.toString());
+        printer.Print("################\r\n");
+
         // phase 1 - solve auxiliary function
 
         // choose variable x0 to enter the basis
@@ -161,7 +165,7 @@ public class Solver
             {
                 if (matrix.hasAuxiliary())
                     if (matrix.getObjValue() != 0 || matrix.getSolution().isBasic())
-                        throw new InfeasibleException("Infeasible Matrix :: " + matrix.toString());
+                        matrix.flagInfeasible();
 
                 optimalMatrices.add(matrix);
                 return;
@@ -173,7 +177,22 @@ public class Solver
 
             // if list of aij is size 0, unbounded
             if(points.size()<=0)
-                throw new UnboundedException("Unbounded Matrix :: "+matrix.toString());
+                matrix.flagUnbounded();
+
+            // if this matrix has an aux and x0=1 in any of the points found,
+            // we only pivot on that point
+            for(Point p:points)
+            {
+                if(matrix.hasAuxiliary())
+                {
+                    if(matrix.getRow(p.getY()).getElement(0)==1)
+                    {
+                        Matrix m = pivot(matrix,p.getX(),p.getY()).copy();
+                        moveToAdjBfs(m);
+                        return;
+                    }
+                }
+            }
 
             // c. for each aij in list
             // pivot on every aij and move to adj bfs on resulting matrices
@@ -183,11 +202,7 @@ public class Solver
                 moveToAdjBfs(m);
             }
         }
-        catch (InfeasibleException ex)
-        {
-            ExceptionHandler.Handle(ex);
-        }
-        catch(UnboundedException ex)
+        catch (Exception ex)
         {
             ExceptionHandler.Handle(ex);
         }

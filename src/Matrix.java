@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-
 /**
  * Aaron Muir
  * CS 309
@@ -16,6 +15,14 @@ public class Matrix
 
     // slack count
     private int slackCount;
+
+    private enum Result
+    {
+        OK,
+        Infeasible,
+        Unbounded
+    }
+    private Result result;
 
     Matrix()
     {
@@ -167,14 +174,6 @@ public class Matrix
             if(!isValid())
                 throw new Exception("Matrix format is not valid!");
 
-            // add the new aux with x0=-1 in the new column and zero all in other columns
-            AugRow aux = new AugRow();
-            aux.addElement(-1.0);
-            for(int i=0;i<getColumnSize();i++)
-            {
-                aux.addElement(0.0);
-            }
-
             // insert x0=0 if the row is the obj function, otherwise x0=-1
             for (AugRow row:rows)
             {
@@ -183,6 +182,16 @@ public class Matrix
                 else
                     row.insertFront(-1.0);
             }
+
+            // add the new aux with x0=-1 in the new column and zero all in other columns
+            AugRow aux = new AugRow();
+            aux.addElement(-1.0);
+            for(int i=0;i<getColumnSize()-1;i++)
+            {
+                aux.addElement(0.0);
+            }
+            rows.add(0,aux);
+
             hasAuxiliary = true;
         }
         catch (Exception ex)
@@ -257,6 +266,22 @@ public class Matrix
     public int getBasicCount(){ return getColumnSize()-slackCount; }
 
     /**
+     * flags the Matrix as unbounded
+     */
+    public void flagUnbounded()
+    {
+        result = Result.Unbounded;
+    }
+
+    /**
+     * flags the Matrix as infeasible
+     */
+    public void flagInfeasible()
+    {
+        result = Result.Infeasible;
+    }
+
+    /**
      * @return whether or not the matrix is valid
      */
     public boolean isValid()
@@ -310,6 +335,7 @@ public class Matrix
      */
     public String toString()
     {
+
         String result = "";
         for(int i=0; i < rows.size();i++)
         {

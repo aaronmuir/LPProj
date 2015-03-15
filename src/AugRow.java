@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -121,12 +122,14 @@ public class AugRow
     public String toString()
     {
         String result = "";
+        DecimalFormat df = new DecimalFormat(" #0.00;-#");
+
         for(int i=0; i< elements.size()-1;i++)
         {
-            result += "\t" + elements.get(i).toString();
+            result += "\t" + df.format(elements.get(i));
         }
         // b
-        result += "\t |" + elements.get(elements.size()-1).toString() + "\r\n";
+        result += "\t |" + df.format(elements.get(elements.size()-1)) + "\r\n";
         return result;
     }
 
