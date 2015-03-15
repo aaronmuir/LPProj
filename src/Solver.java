@@ -124,7 +124,7 @@ public class Solver
         current = selectX0Pivot(current);
 
         // we should have a bfs
-        assert current.getSolution().isBfs();
+        //assert current.getSolution().isBfs();
 
         // repeatedly improve aux obj W until W is zero
         moveToAdjBfs(current);
@@ -303,12 +303,15 @@ public class Solver
      */
     private void determineSolveMethod()
     {
-        Solution s = initial.getSolution();
-        // does the initial solution correspond to the origin
-        if(s.isOrigin())
-            solveMethod = Method.simplex;
-        else
-            solveMethod = Method.twoPhaseSimplex;
+        solveMethod = Method.simplex;
+
+        for(int i=0;i<initial.getRowSize()-1;i++)
+        {
+            AugRow row = initial.getRow(i);
+            if(row.getB()<0)
+                solveMethod = Method.twoPhaseSimplex;
+        }
+
     }
 
     /**
