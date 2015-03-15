@@ -14,7 +14,9 @@ public class Matrix
     private boolean hasAuxiliary;
 
     // slack count
-    private int slackCount;
+    private int slackCount=0;
+
+    private static int count;
 
     private enum Result
     {
@@ -22,10 +24,12 @@ public class Matrix
         Infeasible,
         Unbounded
     }
+
     private Result result;
 
     Matrix()
     {
+        count++;
         rows = new ArrayList<AugRow>();
         slackCount = 0;
     }
@@ -268,6 +272,22 @@ public class Matrix
     /**
      * flags the Matrix as unbounded
      */
+    public boolean isUnbounded()
+    {
+        return result == Result.Unbounded;
+    }
+
+    /**
+     * flags the Matrix as infeasible
+     */
+    public boolean isInfeasible()
+    {
+        return result == Result.Infeasible;
+    }
+
+    /**
+     * flags the Matrix as unbounded
+     */
     public void flagUnbounded()
     {
         result = Result.Unbounded;
@@ -335,8 +355,9 @@ public class Matrix
      */
     public String toString()
     {
-
-        String result = "";
+        String result = "\r\n";
+        result += "--------------------\r\n";
+        result += "Displaying Matrix "+count+"\r\n";
         for(int i=0; i < rows.size();i++)
         {
             result += rows.get(i).toString();
@@ -359,6 +380,7 @@ public class Matrix
         }
         copy.hasAuxiliary = this.hasAuxiliary;
         copy.slackCount = this.slackCount;
+        copy.result = this.result;
         return copy;
     }
 }

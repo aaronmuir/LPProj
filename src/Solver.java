@@ -141,13 +141,17 @@ public class Solver
         // remove auxiliary remnants
         solvedAux.removeAuxiliary();
 
-        // add to list of matrices
-        tables.add(solvedAux);
+        // if the solved aux is not infeasible and not unbounded
+        if(!solvedAux.isInfeasible() && !solvedAux.isUnbounded())
+        {
+            // add to list of matrices
+            tables.add(solvedAux);
 
-        // phase 2 - solve simplex
+            // phase 2 - solve simplex
 
-        // continue to solve using simplex
-        simplex();
+            // continue to solve using simplex
+            simplex();
+        }
     }
 
     /**
@@ -157,6 +161,7 @@ public class Solver
      */
     private void moveToAdjBfs(Matrix matrix)
     {
+        tables.add(matrix);
         try
         {
             // a. choose column i to enter the basis by finding largest Ai0
@@ -165,6 +170,7 @@ public class Solver
             // if all Ai0 (not b) are <=0 (matrix is optimal)
             if (matrix.isOptimal())
             {
+                printer.Print("Matrix is optimal\r\n");
                 if (matrix.hasAuxiliary())
                 {
                     if (matrix.getObjValue() != 0) //|| matrix.getSolution().isBasic()
@@ -390,9 +396,6 @@ public class Solver
                 }
             }
         }
-
-        // add pivoted matrix to list
-        tables.add(m);
 
         // print the matrix
         printer.Print(m.toString());
