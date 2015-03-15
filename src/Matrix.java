@@ -17,6 +17,14 @@ public class Matrix
     // slack count
     private int slackCount;
 
+    private enum Result
+    {
+        OK,
+        Infeasible,
+        Unbounded
+    }
+    private Result result;
+
     Matrix()
     {
         rows = new ArrayList<AugRow>();
@@ -255,6 +263,22 @@ public class Matrix
      * @return the number of basic variables used
      */
     public int getBasicCount(){ return getColumnSize()-slackCount; }
+
+    /**
+     * flags the Matrix as unbounded
+     */
+    public void flagUnbounded()
+    {
+        result = Result.Unbounded;
+    }
+
+    /**
+     * flags the Matrix as infeasible
+     */
+    public void flagInfeasible()
+    {
+        result = Result.Infeasible;
+    }
 
     /**
      * @return whether or not the matrix is valid
