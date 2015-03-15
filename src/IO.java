@@ -18,7 +18,9 @@ public class IO
         String fileString="";
 
         // read input file
-        try(BufferedReader br = new BufferedReader(new FileReader(fileLocation))) {
+        try
+        {
+            BufferedReader br = new BufferedReader(new FileReader(fileLocation));
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
 
@@ -49,8 +51,9 @@ public class IO
      */
     public static void writeFile(String fileLocation, String text)
     {
-        try(BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation)))
+        try
         {
+            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
             bw.write(text);
         }
         catch(FileNotFoundException e)
