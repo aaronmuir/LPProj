@@ -13,10 +13,10 @@ public class Matrix
     private ArrayList<AugRow> rows;
     private boolean hasAuxiliary;
 
-    // slack count
+    // slack index
     private int slackCount=0;
 
-    private static int count;
+    private static int index;
 
     private enum Result
     {
@@ -29,7 +29,7 @@ public class Matrix
 
     Matrix()
     {
-        count++;
+        index++;
         rows = new ArrayList<AugRow>();
         slackCount = 0;
     }
@@ -351,13 +351,20 @@ public class Matrix
 
     /**
      *
+     * @return the current instance index of the matrix
+     */
+    public int getIndex()
+    {
+        return index;
+    }
+
+    /**
+     *
      * @return string formatted matrix
      */
     public String toString()
     {
         String result = "\r\n";
-        result += "--------------------\r\n";
-        result += "Displaying Matrix "+count+"\r\n";
         for(int i=0; i < rows.size();i++)
         {
             result += rows.get(i).toString();
