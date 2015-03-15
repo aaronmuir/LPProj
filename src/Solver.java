@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -43,13 +44,11 @@ public class Solver
         {
             Double maxValue = 0.0;
             Matrix bestMatrix = new Matrix();
+            DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
             for (Matrix m : optimalMatrices)
             {
                 Double objValue = m.getObjValue();
-
-                printer.Print(m.getSolution().toString());
-                printer.Print("Optimal Value: " + m.getObjValue().toString());
 
                 if (objValue > maxValue)
                 {
@@ -57,14 +56,14 @@ public class Solver
                     bestMatrix = m;
                 }
             }
-            printer.Print("BEST SOLUTION");
-            printer.Print("-------------");
+            printer.Print("BEST SOLUTION\r\n");
+            printer.Print("-------------\r\n");
             printer.Print(bestMatrix.getSolution().toString());
-            printer.Print("Max Value: " + maxValue.toString());
+            printer.Print("Max Value: " + df.format(maxValue)+"\r\n");
         }
         else
         {
-            printer.Print("NO SOLUTIONS FOUND");
+            printer.Print("NO SOLUTIONS FOUND\r\n");
         }
     }
 
@@ -75,8 +74,12 @@ public class Solver
     {
         try
         {
+            printer.Print("Initial Matrix\r\n");
+            printer.Print(initial.toString());
+
             this.determineSolveMethod();
 
+            printer.Print("Using method "+ solveMethod.name()+"...\r\n");
             // copy the initial so it is preserved
             tables.add(initial.copy());
 
@@ -120,7 +123,6 @@ public class Solver
 
         printer.Print("Auxiliary Created\r\n");
         printer.Print(current.toString());
-        printer.Print("################\r\n");
 
         // phase 1 - solve auxiliary function
 
@@ -164,42 +166,51 @@ public class Solver
             if (matrix.isOptimal())
             {
                 if (matrix.hasAuxiliary())
-                    if (matrix.getObjValue() != 0 || matrix.getSolution().isBasic())
+                {
+                    if (matrix.getObjValue() != 0) //|| matrix.getSolution().isBasic()
+                    {
                         matrix.flagInfeasible();
-
+                        throw new InfeasibleException("The matrix is infeasible.") ;
+                    }
+                }
                 optimalMatrices.add(matrix);
                 return;
             }
-
-            // b. choose the row j of the variable to leave
-            // list of points to leave the basis
-            ArrayList<Point> points = pointsToPivot(matrix,cols);
-
-            // if list of aij is size 0, unbounded
-            if(points.size()<=0)
-                matrix.flagUnbounded();
-
-            // if this matrix has an aux and x0=1 in any of the points found,
-            // we only pivot on that point
-            for(Point p:points)
+            else
             {
-                if(matrix.hasAuxiliary())
+                // b. choose the row j of the variable to leave
+                // list of points to leave the basis
+                ArrayList<Point> points = pointsToPivot(matrix, cols);
+
+                // if list of aij is size 0, unbounded
+                if (points.size() <= 0)
                 {
-                    if(matrix.getRow(p.getY()).getElement(0)==1)
+                    matrix.flagUnbounded();
+                    throw new UnboundedException("This matrix is unbounded.");
+                }
+
+                // if this matrix has an aux and x0=1 in any of the points found,
+                // we only pivot on that point
+                for (Point p : points)
+                {
+                    if (matrix.hasAuxiliary())
                     {
-                        Matrix m = pivot(matrix,p.getX(),p.getY()).copy();
-                        moveToAdjBfs(m);
-                        return;
+                        if (matrix.getRow(p.getY()).getElement(0) == 1)
+                        {
+                            Matrix m = pivot(matrix, p.getX(), p.getY()).copy();
+                            moveToAdjBfs(m);
+                            return;
+                        }
                     }
                 }
-            }
 
-            // c. for each aij in list
-            // pivot on every aij and move to adj bfs on resulting matrices
-            for(Point p:points)
-            {
-                Matrix m = pivot(matrix,p.getX(),p.getY()).copy();
-                moveToAdjBfs(m);
+                // c. for each aij in list
+                // pivot on every aij and move to adj bfs on resulting matrices
+                for (Point p : points)
+                {
+                    Matrix m = pivot(matrix, p.getX(), p.getY()).copy();
+                    moveToAdjBfs(m);
+                }
             }
         }
         catch (Exception ex)
@@ -296,18 +307,17 @@ public class Solver
         // find the row of the most negative basic var.
         // default to row 2 if no negatives found.
         int negRow=2;
-        Double mostNegBasic = 0.0;
-        for(int i=0;i<matrix.getBasicCount();i++)
+        Double mostNegB = 0.0;
+
+        for(int j=2;j<matrix.getRowSize();j++)
         {
-            for(int j=0;j<matrix.getRowSize();j++)
+            if(matrix.getRow(j).getB()<mostNegB)
             {
-                if(matrix.getValue(i,j)<mostNegBasic)
-                {
-                    mostNegBasic = matrix.getValue(i,j);
-                    negRow=j;
-                }
+                mostNegB = matrix.getRow(j).getB();
+                negRow=j;
             }
         }
+
         // pivot on x0 in the row with the most negative basic
         Matrix m = pivot(matrix,0,negRow).copy();
         return m;
@@ -320,10 +330,14 @@ public class Solver
     {
         solveMethod = Method.simplex;
 
-        for(int i=0;i<initial.getRowSize()-1;i++)
+        // start after obj function row
+        int rowSize = initial.getRowSize();
+
+        for(int i=1;i< rowSize;i++)
         {
             AugRow row = initial.getRow(i);
-            if(row.getB()<0)
+            double b = row.getB();
+            if(b < 0)
                 solveMethod = Method.twoPhaseSimplex;
         }
 
