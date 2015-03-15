@@ -157,7 +157,7 @@ public class Solver
     /**
      * Improves the objective
      * @param matrix
-     * @return whether or not the solution is optimal
+     * @return returns when selected pivot produces optimal,infeasible, or unbounded matrix
      */
     private void moveToAdjBfs(Matrix matrix)
     {
@@ -176,11 +176,12 @@ public class Solver
                     if (matrix.getObjValue() != 0) //|| matrix.getSolution().isBasic()
                     {
                         matrix.flagInfeasible();
-                        throw new InfeasibleException("The matrix is infeasible.") ;
+                        return;
                     }
                 }
-                optimalMatrices.add(matrix);
-                return;
+
+                if(!matrix.hasAuxiliary())
+                    optimalMatrices.add(matrix);
             }
             else
             {
@@ -192,31 +193,48 @@ public class Solver
                 if (points.size() <= 0)
                 {
                     matrix.flagUnbounded();
-                    throw new UnboundedException("This matrix is unbounded.");
+                    return;
                 }
 
                 // if this matrix has an aux and x0=1 in any of the points found,
                 // we only pivot on that point
+                ArrayList<Point> x0points = new ArrayList<Point>();
                 for (Point p : points)
                 {
                     if (matrix.hasAuxiliary())
                     {
                         if (matrix.getRow(p.getY()).getElement(0) == 1)
                         {
-                            Matrix m = pivot(matrix, p.getX(), p.getY()).copy();
-                            moveToAdjBfs(m);
-                            return;
+                            x0points.add(p);
                         }
+                    }
+                }
+                if(x0points.size()>0)
+                {
+                    points.clear();
+                    for(Point x : x0points)
+                    {
+                        points.add(x);
                     }
                 }
 
                 // c. for each aij in list
                 // pivot on every aij and move to adj bfs on resulting matrices
+                // prioritize x0 points
+
+                printer.Print("Found the following points to pivot on: ");
                 for (Point p : points)
                 {
-                    Matrix m = pivot(matrix, p.getX(), p.getY()).copy();
+                    printer.Print(p.toString() + " ");
+                }
+                printer.Print("\r\n");
+
+                for (Point p : points)
+                {
+                    Matrix m = pivot(matrix, p).copy();
                     moveToAdjBfs(m);
                 }
+
             }
         }
         catch (Exception ex)
@@ -324,8 +342,10 @@ public class Solver
             }
         }
 
+        Point pivotPoint = new Point(0,negRow);
+
         // pivot on x0 in the row with the most negative basic
-        Matrix m = pivot(matrix,0,negRow).copy();
+        Matrix m = pivot(matrix,pivotPoint).copy();
         return m;
     }
 
@@ -354,11 +374,16 @@ public class Solver
      * xi enters the basis.
      *
      * @param matrix
-     * @param i
-     * @param j
+     * @param p point to pivot on
      */
-    private Matrix pivot(Matrix matrix, int i, int j)
+    private Matrix pivot(Matrix matrix, Point p)
     {
+        printer.Print("Before pivot\r\n");
+        printer.Print(matrix.toString());
+
+        int i = p.getX();
+        int j = p.getY();
+
         // create a new copy of the matrix before pivoting
         Matrix m = matrix.copy();
 
@@ -396,8 +421,7 @@ public class Solver
                 }
             }
         }
-
-        // print the matrix
+        printer.Print("After Pivot\r\n");
         printer.Print(m.toString());
 
         return m;
