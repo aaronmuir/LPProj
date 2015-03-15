@@ -118,6 +118,10 @@ public class Solver
         // create an auxiliary row & column in the current matrix
         current.createAuxiliary();
 
+        printer.Print("Auxiliary Created\r\n");
+        printer.Print(current.toString());
+        printer.Print("################\r\n");
+
         // phase 1 - solve auxiliary function
 
         // choose variable x0 to enter the basis
