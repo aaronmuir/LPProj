@@ -1,3 +1,4 @@
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -81,14 +82,17 @@ public class Solution
     {
         String s = "";
         int i=1;
+        DecimalFormat df = new DecimalFormat(" #0.00;-#");
+
         for(Double d:elements)
         {
-            s +=" x"+i+"="+d.toString();
+            s +=" x"+i+"="+df.format(d);
             if(i!=elements.size())
                 s+=", ";
 
             i++;
         }
+        s+= "\r\n";
         return s;
     }
 }

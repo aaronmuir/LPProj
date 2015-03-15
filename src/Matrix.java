@@ -341,6 +341,7 @@ public class Matrix
         {
             result += rows.get(i).toString();
         }
+        result += "\r\n";
         return result;
     }
 
