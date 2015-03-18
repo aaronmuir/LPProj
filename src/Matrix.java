@@ -12,8 +12,8 @@ public class Matrix
 {
     private ArrayList<AugRow> rows;
     private boolean hasAuxiliary;
-
-    // slack index
+    private Matrix _parent;
+    private ArrayList<Matrix> _children;
     private int slackCount=0;
 
     private static int index;
@@ -31,6 +31,7 @@ public class Matrix
     {
         index++;
         rows = new ArrayList<AugRow>();
+        _children = new ArrayList<Matrix>();
         slackCount = 0;
     }
 
@@ -394,9 +395,11 @@ public class Matrix
         {
             copy.rows.add(row.copy());
         }
+        copy._parent = this;
         copy.hasAuxiliary = this.hasAuxiliary;
         copy.slackCount = this.slackCount;
         copy.result = this.result;
+        this._children.add(copy);
         return copy;
     }
 }
