@@ -378,8 +378,8 @@ public class Solver
      */
     private Matrix pivot(Matrix matrix, Point p)
     {
-        printer.Print("Before pivot\r\n");
-        printer.Print(matrix.toString());
+        printer.Print("Before pivot on "+p+"\r\n");
+        printer.Print(matrix.toString(p));
 
         int i = p.getX();
         int j = p.getY();

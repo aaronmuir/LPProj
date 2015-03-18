@@ -360,17 +360,26 @@ public class Matrix
 
     /**
      *
-     * @return string formatted matrix
+     * @param p Point to pivot on. -1,-1 indicates no pivot
+     * @return matrix in string format
      */
-    public String toString()
+    public String toString(Point p)
     {
         String result = "\r\n";
         for(int i=0; i < rows.size();i++)
         {
-            result += rows.get(i).toString();
+            if(p.getY()==i)
+                result += rows.get(i).toString(p);
+            else
+                result += rows.get(i).toString();
         }
         result += "\r\n";
         return result;
+    }
+    @Override
+    public String toString()
+    {
+        return toString(new Point(-1,-1));
     }
 
     /**
