@@ -46,20 +46,22 @@ public class Solver
             Matrix bestMatrix = new Matrix();
             DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
+            printer.Print("\r\n");
+            printer.Print("-----------------\r\n");
+            printer.Print("OPTIMAL SOLUTIONS\r\n");
+            printer.Print("-----------------\r\n");
+
             for (Matrix m : optimalMatrices)
             {
                 Double objValue = m.getObjValue();
-
+                printer.Print(m.toString());
+                printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
                 if (objValue > maxValue)
                 {
                     maxValue = objValue;
                     bestMatrix = m;
                 }
             }
-            printer.Print("BEST SOLUTION\r\n");
-            printer.Print("-------------\r\n");
-            printer.Print(bestMatrix.getSolution().toString());
-            printer.Print("Max Value: " + df.format(maxValue)+"\r\n");
         }
         else
         {
@@ -157,10 +159,12 @@ public class Solver
         }
 
         // remove auxiliaries from optimal solutions
+        int i=0;
         for(Matrix solvedAux:optimalMatrices)
         {
             if(solvedAux.hasAuxiliary())
-                optimalMatrices.remove(solvedAux);
+                optimalMatrices.remove(i);
+            i++;
         }
     }
 
