@@ -155,6 +155,13 @@ public class Solver
                 simplex();
             }
         }
+
+        // remove auxiliaries from optimal solutions
+        for(Matrix solvedAux:optimalMatrices)
+        {
+            if(solvedAux.hasAuxiliary())
+                optimalMatrices.remove(solvedAux);
+        }
     }
 
     /**
