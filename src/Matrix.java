@@ -12,8 +12,8 @@ public class Matrix
 {
     private ArrayList<AugRow> rows;
     private boolean hasAuxiliary;
-
-    // slack index
+    private Matrix _parent;
+    private ArrayList<Matrix> _children;
     private int slackCount=0;
 
     private static int index;
@@ -31,6 +31,7 @@ public class Matrix
     {
         index++;
         rows = new ArrayList<AugRow>();
+        _children = new ArrayList<Matrix>();
         slackCount = 0;
     }
 
@@ -360,17 +361,26 @@ public class Matrix
 
     /**
      *
-     * @return string formatted matrix
+     * @param p Point to pivot on. -1,-1 indicates no pivot
+     * @return matrix in string format
      */
-    public String toString()
+    public String toString(Point p)
     {
         String result = "\r\n";
         for(int i=0; i < rows.size();i++)
         {
-            result += rows.get(i).toString();
+            if(p.getY()==i)
+                result += rows.get(i).toString(p);
+            else
+                result += rows.get(i).toString();
         }
         result += "\r\n";
         return result;
+    }
+    @Override
+    public String toString()
+    {
+        return toString(new Point(-1,-1));
     }
 
     /**
@@ -385,9 +395,11 @@ public class Matrix
         {
             copy.rows.add(row.copy());
         }
+        copy._parent = this;
         copy.hasAuxiliary = this.hasAuxiliary;
         copy.slackCount = this.slackCount;
         copy.result = this.result;
+        this._children.add(copy);
         return copy;
     }
 }

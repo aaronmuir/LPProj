@@ -116,23 +116,30 @@ public class AugRow
     }
 
     /**
-     *
+     * @param p Point to pivot on
      * @return augmented row of elements in string format
      */
-    public String toString()
+    public String toString(Point p)
     {
         String result = "";
-        DecimalFormat df = new DecimalFormat(" #0.00;-#");
+        DecimalFormat df = new DecimalFormat(" 00.00;-#");
 
         for(int i=0; i< elements.size()-1;i++)
         {
-            result += "\t" + df.format(elements.get(i));
+            result += df.format(elements.get(i));
+            if(p.getX()==i)
+                result+="*";
+            result+="\t";
         }
         // b
-        result += "\t |" + df.format(elements.get(elements.size()-1)) + "\r\n";
+        result += " |" + df.format(elements.get(elements.size()-1)) + "\r\n";
         return result;
     }
-
+    @Override
+    public String toString()
+    {
+        return toString(new Point(-1,-1));
+    }
 
     public int size()
     {

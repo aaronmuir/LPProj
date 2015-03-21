@@ -46,20 +46,22 @@ public class Solver
             Matrix bestMatrix = new Matrix();
             DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
+            printer.Print("\r\n");
+            printer.Print("-----------------\r\n");
+            printer.Print("OPTIMAL SOLUTIONS\r\n");
+            printer.Print("-----------------\r\n");
+
             for (Matrix m : optimalMatrices)
             {
                 Double objValue = m.getObjValue();
-
+                printer.Print(m.toString());
+                printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
                 if (objValue > maxValue)
                 {
                     maxValue = objValue;
                     bestMatrix = m;
                 }
             }
-            printer.Print("BEST SOLUTION\r\n");
-            printer.Print("-------------\r\n");
-            printer.Print(bestMatrix.getSolution().toString());
-            printer.Print("Max Value: " + df.format(maxValue)+"\r\n");
         }
         else
         {
@@ -86,10 +88,12 @@ public class Solver
             if (solveMethod == Method.simplex)
             {
                 simplex();
-            } else if (solveMethod == Method.twoPhaseSimplex)
+            }
+            else if (solveMethod == Method.twoPhaseSimplex)
             {
                 twoPhaseSimplex();
-            } else
+            }
+            else
                 throw new Exception("Unexpected solve method being utilized");
 
         }
@@ -135,22 +139,32 @@ public class Solver
         // repeatedly improve aux obj W until W is zero
         moveToAdjBfs(current);
 
-        // assume the last matrix is the solved auxiliary
-        Matrix solvedAux = tables.get(tables.size()-1).copy();
-
-        // remove auxiliary remnants
-        solvedAux.removeAuxiliary();
-
-        // if the solved aux is not infeasible and not unbounded
-        if(!solvedAux.isInfeasible() && !solvedAux.isUnbounded())
+        // solve every matrix with optimal auxiliary
+        for(Matrix solvedAux:optimalMatrices)
         {
-            // add to list of matrices
-            tables.add(solvedAux);
+            // remove auxiliary remnants
+            solvedAux.removeAuxiliary();
 
-            // phase 2 - solve simplex
+            // if the solved aux is not infeasible and not unbounded
+            if(!solvedAux.isInfeasible() && !solvedAux.isUnbounded())
+            {
+                // add to list of matrices
+                tables.add(solvedAux);
 
-            // continue to solve using simplex
-            simplex();
+                // phase 2 - solve simplex
+
+                // continue to solve using simplex
+                simplex();
+            }
+        }
+
+        // remove auxiliaries from optimal solutions
+        int i=0;
+        for(Matrix solvedAux:optimalMatrices)
+        {
+            if(solvedAux.hasAuxiliary())
+                optimalMatrices.remove(i);
+            i++;
         }
     }
 
@@ -179,9 +193,7 @@ public class Solver
                         return;
                     }
                 }
-
-                if(!matrix.hasAuxiliary())
-                    optimalMatrices.add(matrix);
+                optimalMatrices.add(matrix);
             }
             else
             {
@@ -378,8 +390,8 @@ public class Solver
      */
     private Matrix pivot(Matrix matrix, Point p)
     {
-        printer.Print("Before pivot\r\n");
-        printer.Print(matrix.toString());
+        printer.Print("Before pivot on "+p+"\r\n");
+        printer.Print(matrix.toString(p));
 
         int i = p.getX();
         int j = p.getY();
