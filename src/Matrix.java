@@ -235,8 +235,16 @@ public class Matrix
         // do not include b column in determination
         for(int i=0;i<getColumnSize()-1;i++)
         {
-            if(firstRow.getElement(i)>0)
+            // acceptable epsilon range for zero
+            double eps = 1E-14;
+            double value = firstRow.getElement(i) - eps;
+            if(value > 0)
+            {
+                Printer p = new Printer(Printer.Style.Console);
+                p.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
+                p.Print("Matrix is not optimal.\r\n\r\n");
                 return false;
+            }
         }
         return true;
     }
