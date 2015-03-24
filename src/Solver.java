@@ -82,16 +82,17 @@ public class Solver
             this.determineSolveMethod();
 
             printer.Print("Using method "+ solveMethod.name()+"...\r\n");
+
             // copy the initial so it is preserved
             tables.add(initial.copy());
 
             if (solveMethod == Method.simplex)
             {
-                simplex();
+                simplex(initial);
             }
             else if (solveMethod == Method.twoPhaseSimplex)
             {
-                twoPhaseSimplex();
+                twoPhaseSimplex(initial);
             }
             else
                 throw new Exception("Unexpected solve method being utilized");
@@ -106,22 +107,16 @@ public class Solver
     /**
      * simplex method of solving
      */
-    private void simplex()
+    private void simplex(Matrix current)
     {
-        // get the current matrix
-        Matrix current = tables.get(tables.size()-1);
-
         moveToAdjBfs(current);
     }
 
     /**
      * two-phase simplex method
      */
-    private void twoPhaseSimplex()
+    private void twoPhaseSimplex(Matrix current)
     {
-        // get the current matrix
-        Matrix current = tables.get(tables.size()-1);
-
         // create an auxiliary row & column in the current matrix
         current.createAuxiliary();
 
@@ -132,9 +127,6 @@ public class Solver
 
         // choose variable x0 to enter the basis
         current = selectX0Pivot(current);
-
-        // we should have a bfs
-        //assert current.getSolution().isBfs();
 
         // repeatedly improve aux obj W until W is zero
         moveToAdjBfs(current);
@@ -151,20 +143,9 @@ public class Solver
                 // add to list of matrices
                 tables.add(solvedAux);
 
-                // phase 2 - solve simplex
-
                 // continue to solve using simplex
-                simplex();
+                simplex(solvedAux);
             }
-        }
-
-        // remove auxiliaries from optimal solutions
-        int i=0;
-        for(Matrix solvedAux:optimalMatrices)
-        {
-            if(solvedAux.hasAuxiliary())
-                optimalMatrices.remove(i);
-            i++;
         }
     }
 
@@ -184,15 +165,18 @@ public class Solver
             // if all Ai0 (not b) are <=0 (matrix is optimal)
             if (matrix.isOptimal())
             {
-                printer.Print("Matrix is optimal\r\n");
                 if (matrix.hasAuxiliary())
                 {
-                    if (matrix.getObjValue() != 0) //|| matrix.getSolution().isBasic()
+                    if (matrix.getObjValue() != 0)
                     {
+                        printer.Print("Matrix is infeasible.\r\n");
+                        printer.Print(matrix.toString());
                         matrix.flagInfeasible();
                         return;
                     }
                 }
+                printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
+                printer.Print(matrix.toString());
                 optimalMatrices.add(matrix);
             }
             else
