@@ -6,7 +6,7 @@
 
 public class Eps
 {
-    public static final double eps = 1.0E-14;
+    public static final double eps = 1.0E-10;
 
     public static double zero(double val)
     {
