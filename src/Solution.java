@@ -9,14 +9,13 @@ import java.util.ArrayList;
 
 public class Solution
 {
-    private ArrayList<Double> elements;
+    private ArrayList<Double> elements = new ArrayList<>();
     private int slackVars;
 
     public Solution(int slackVars, ArrayList<Double> elements)
     {
         this.slackVars = slackVars;
 
-        this.elements = new ArrayList<Double>();
         for(Double d: elements) this.elements.add(d);
     }
 
@@ -36,9 +35,9 @@ public class Solution
     public Boolean isBasic()
     {
         int count = 0;
-        for(int i=0;i<elements.size();i++)
+        for (Double element : elements)
         {
-            if(elements.get(i)==0)
+            if (element == 0.0)
                 count++;
         }
         return count<=slackVars;
@@ -51,27 +50,12 @@ public class Solution
     public Boolean isFeasible()
     {
         int count = 0;
-        for(int i=0;i<elements.size();i++)
+        for (Double element : elements)
         {
-            if(elements.get(i) < 0)
+            if (element < 0)
                 count++;
         }
         return count==0;
-    }
-
-    /**
-     * Returns whether or not the current solution is the origin
-     *
-     */
-    public Boolean isOrigin()
-    {
-       int basicCount = elements.size()-slackVars;
-       for(int i=0;i<basicCount;i++)
-       {
-           if(elements.get(i)!=0.0)
-               return false;
-       }
-       return true;
     }
 
     /**
@@ -86,10 +70,13 @@ public class Solution
 
         for(Double d:elements)
         {
-            s +=" x"+i+"="+df.format(d);
-            if(i!=elements.size())
-                s+=", ";
+            if(d!=0.0)
+            {
+                s += " x" + i + "=" + df.format(d);
+                if (i != elements.size())
+                    s += ", ";
 
+            }
             i++;
         }
         s+= "\r\n";

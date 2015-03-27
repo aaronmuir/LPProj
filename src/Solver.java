@@ -9,16 +9,14 @@ import java.util.ArrayList;
 public class Solver
 {
     private Matrix initial;
-    private ArrayList<Matrix> tables;
+    protected ArrayList<Matrix> tables;
     private ArrayList<Matrix> optimal;
     private ArrayList<Matrix> optimalAux;
-    private Double optimalValue;
 
     private enum Method
     {
         simplex,
-        twoPhaseSimplex,
-        dualSimplex
+        twoPhaseSimplex
     }
     private Method solveMethod;
 
@@ -29,9 +27,9 @@ public class Solver
      */
     public Solver(Matrix original, Printer printer)
     {
-        tables = new ArrayList<Matrix>();
-        optimal = new ArrayList<Matrix>();
-        optimalAux = new ArrayList<Matrix>();
+        tables = new ArrayList<>();
+        optimal = new ArrayList<>();
+        optimalAux = new ArrayList<>();
         this.initial = original;
         this.printer = printer;
         this.solve();
@@ -44,8 +42,6 @@ public class Solver
     {
         if(optimal.size()>0)
         {
-            Double maxValue = 0.0;
-            Matrix bestMatrix = new Matrix();
             DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
             printer.Print("\r\n");
@@ -59,11 +55,6 @@ public class Solver
                 printer.Print(m.toString());
                 printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
                 printer.Print(m.getSolution().toString());
-                if (objValue > maxValue)
-                {
-                    maxValue = objValue;
-                    bestMatrix = m;
-                }
             }
         }
         else
@@ -172,8 +163,9 @@ public class Solver
     }
 
     /**
-     * Improves the objective
-     * @param matrix
+     * Improve the objective
+     *
+     * @param matrix matrix to improve
      * @return returns when selected pivot produces optimal,infeasible, or unbounded matrix
      */
     private void moveToAdjBfs(Matrix matrix)
@@ -211,12 +203,13 @@ public class Solver
                 if (points.size() <= 0)
                 {
                     matrix.flagUnbounded();
+                    printer.Print("Matrix is unbounded.\r\n");
                     return;
                 }
 
                 // if this matrix has an aux and x0=1 in any of the points found,
                 // we only pivot on that point
-                ArrayList<Point> x0points = new ArrayList<Point>();
+                ArrayList<Point> x0points = new ArrayList<>();
                 for (Point p : points)
                 {
                     if (matrix.hasAuxiliary())
@@ -265,15 +258,15 @@ public class Solver
      * Find a list of points in the matrix to pivot on
      * @param m - matrix
      * @param cols - pivot columns
-     * @return
+     * @return list of points to pivot on
      */
     private ArrayList<Point> pointsToPivot(Matrix m, ArrayList<Integer> cols)
     {
-        ArrayList<Point> pivotPoints = new ArrayList<Point>();
+        ArrayList<Point> pivotPoints = new ArrayList<>();
 
         try
         {
-            ArrayList<Point> validPoints = new ArrayList<Point>();
+            ArrayList<Point> validPoints = new ArrayList<>();
             // find points where aij > 0
             for(Integer i:cols)
             {
@@ -311,25 +304,23 @@ public class Solver
                 if(min.equals(b / Aij))
                     pivotPoints.add(p);
             }
+            return pivotPoints;
         }
         catch (Exception ex)
         {
             ExceptionHandler.Handle(ex);
-        }
-        finally
-        {
-            return pivotPoints;
+            return null;
         }
     }
 
     /**
      * Finds all columns with the largest possible value in row zero
      * @param m matrix
-     * @return
+     * @return column index with the largest value
      */
     ArrayList<Integer> getLargestAi0(Matrix m)
     {
-        ArrayList<Integer> cols = new ArrayList<Integer>();
+        ArrayList<Integer> cols = new ArrayList<>();
         try
         {
             // find ALL i with largest Ai0
@@ -349,24 +340,21 @@ public class Solver
                 if(val.equals(largest))
                     cols.add(i);
             }
+            return cols;
         }
         catch (Exception ex)
         {
             ExceptionHandler.Handle(ex);
-        }
-        finally
-        {
-            return cols;
+            return null;
         }
     }
 
     /**
      * find and pivot on row in column x0
-     * @param matrix
+     * @param matrix matrix
      */
     private Matrix selectX0Pivot(Matrix matrix)
     {
-        Matrix m = new Matrix();
         try
         {
             // find the row of the most negative basic var.
@@ -386,15 +374,12 @@ public class Solver
             Point pivotPoint = new Point(0, negRow);
 
             // pivot on x0 in the row with the most negative basic
-            m = pivot(matrix, pivotPoint).copy();
+            return pivot(matrix, pivotPoint).copy();
         }
         catch (Exception ex)
         {
             ExceptionHandler.Handle(ex);
-        }
-        finally
-        {
-            return m;
+            return null;
         }
     }
 
@@ -403,12 +388,9 @@ public class Solver
      */
     private void determineSolveMethod()
     {
-        solveMethod = Method.simplex;
-
-        // start after obj function row
-        int rowSize = initial.getRowSize();
-
-        if(!initial.getSolution().isBfs())
+        if(initial.getSolution().isBfs())
+            solveMethod = Method.simplex;
+        else
             solveMethod = Method.twoPhaseSimplex;
 
     }
@@ -417,13 +399,11 @@ public class Solver
      * Pivot on an element in row j column i reducing xi to an identity vector.
      * xi enters the basis.
      *
-     * @param matrix
+     * @param matrix matrix to pivot on
      * @param p point to pivot on
      */
     private Matrix pivot(Matrix matrix, Point p)
     {
-        Matrix m = new Matrix();
-
         try
         {
             printer.Print("Before pivot on " + p + "\r\n");
@@ -433,7 +413,7 @@ public class Solver
             int j = p.getY();
 
             // create a new copy of the matrix before pivoting
-            m = matrix.copy();
+            Matrix m = matrix.copy();
 
             Double Aij = m.getValue(i, j);
 
@@ -475,14 +455,12 @@ public class Solver
             }
             printer.Print("After Pivot\r\n");
             printer.Print(m.toString());
+            return m;
         }
         catch (Exception ex)
         {
             ExceptionHandler.Handle(ex);
-        }
-        finally
-        {
-            return m;
+            return null;
         }
     }
 }

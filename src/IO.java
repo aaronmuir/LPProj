@@ -11,7 +11,7 @@ public class IO
      * Reads the contents of file into a string variable. crlf delimited
      *
      * @param fileLocation file path to the text file
-     * @return
+     * @return the text inside the text file
      */
     public static String readFile(String fileLocation)
     {
@@ -31,12 +31,7 @@ public class IO
             }
             fileString = sb.toString();
 
-        }
-        catch (FileNotFoundException e)
-        {
-            ExceptionHandler.Handle(e);
-        }
-        catch(IOException e)
+        } catch(IOException e)
         {
             ExceptionHandler.Handle(e);
         }
@@ -46,8 +41,8 @@ public class IO
     /**
      * Write the text to a file at fileLocation
      *
-     * @param fileLocation
-     * @param text
+     * @param fileLocation file path
+     * @param text text to be written to the file
      */
     public static void writeFile(String fileLocation, String text)
     {
@@ -55,12 +50,7 @@ public class IO
         {
             BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
             bw.write(text);
-        }
-        catch(FileNotFoundException e)
-        {
-            ExceptionHandler.Handle(e);
-        }
-        catch(IOException e)
+        } catch(IOException e)
         {
             ExceptionHandler.Handle(e);
         }

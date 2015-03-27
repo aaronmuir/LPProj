@@ -24,28 +24,24 @@ public class TextParam
         catch (NumberFormatException ex)
         {
             // handle NaN
-            if(param.equals("<="))
+            switch (param)
             {
-                // max constraint
-                row.setConstraint(true);
-                row.setNeedsSlack(true);
-            }
-            else if(param.equals(">="))
-            {
-                // min constraint
-                row.setConstraint(true);
-                row.setNeedsSlack(true);
-                // negate
-                row.setNegate(true);
-            }
-            else if(param.equals("=="))
-            {
-                row.setConstraint(true);
-                row.setNeedsSlack(false);
-            }
-            else
-            {
-                assert false:"Unknown element in row "+i+" tab "+j;
+                case "<=":
+                    // max constraint
+                    row.setConstraint(true);
+                    break;
+                case ">=":
+                    // min constraint
+                    row.setConstraint(true);
+                    // negate
+                    row.setNegate(true);
+                    break;
+                case "==":
+                    row.setConstraint(true);
+                    break;
+                default:
+                    assert false : "Unknown element in row " + i + " tab " + j;
+                    break;
             }
         }
     }

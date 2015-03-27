@@ -5,9 +5,6 @@
  */
 public class LP
 {
-    private static String fileString;
-    private static String fileLocation;
-    private static Matrix initMatrix;
 
     /**
      * Entry point
@@ -21,13 +18,13 @@ public class LP
             // verify the file is not null before processing
             if(args.length>0)
             {
-                fileLocation = args[0];
+                String fileLocation = args[0];
 
                 // read input file into string
-                fileString = IO.readFile(fileLocation);
+                String fileString = IO.readFile(fileLocation);
 
                 // parse string into standard form
-                initMatrix = convertToMatrix(fileString);
+                Matrix initMatrix = convertToMatrix(fileString);
 
                 // configure a printer
                 Printer printer = new Printer(Printer.Style.Console);

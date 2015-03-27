@@ -16,10 +16,10 @@ public class AugRow
 
     private Boolean negate;
     private Boolean constraint;
-    private Boolean needsSlack;
+
     AugRow()
     {
-        elements = new ArrayList<Double>();
+        elements = new ArrayList<>();
         constraint = false;
         negate = false;
     }
@@ -58,7 +58,7 @@ public class AugRow
      * inserts a new coefficient in the last column of the row elements
      *  in the A matrix. Placed in the column before the augmented column.
      *
-     * @param val
+     * @param val the value to be inserted at the end of A
      */
     public void insertA(Double val)
     {
@@ -68,7 +68,7 @@ public class AugRow
     /**
      * inserts a value the front of the row of elements
      *
-     * @param val
+     * @param val value to be inserted at the beginning of A
      */
     public void insertFront(Double val)
     {
@@ -90,10 +90,8 @@ public class AugRow
      */
     public boolean equals(AugRow row)
     {
-        if(!row.elements.equals(elements))
-            return  false;
+        return row.elements.equals(elements);
 
-        return true;
     }
 
     public AugRow copy()
@@ -114,7 +112,7 @@ public class AugRow
     {
         for(int i=0;i< elements.size();i++)
         {
-            elements.set(i, elements.get(i).doubleValue()*-1.0);
+            elements.set(i, elements.get(i) *-1.0);
         }
     }
 
@@ -176,15 +174,5 @@ public class AugRow
     public void setNegate(Boolean negate)
     {
         this.negate = negate;
-    }
-
-    public Boolean getNeedsSlack()
-    {
-        return needsSlack;
-    }
-
-    public void setNeedsSlack(Boolean needsSlack)
-    {
-        this.needsSlack = needsSlack;
     }
 }
