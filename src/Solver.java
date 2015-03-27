@@ -10,7 +10,8 @@ public class Solver
 {
     private Matrix initial;
     private ArrayList<Matrix> tables;
-    private ArrayList<Matrix> optimalMatrices;
+    private ArrayList<Matrix> optimal;
+    private ArrayList<Matrix> optimalAux;
     private Double optimalValue;
 
     private enum Method
@@ -29,7 +30,8 @@ public class Solver
     public Solver(Matrix original, Printer printer)
     {
         tables = new ArrayList<Matrix>();
-        optimalMatrices = new ArrayList<Matrix>();
+        optimal = new ArrayList<Matrix>();
+        optimalAux = new ArrayList<Matrix>();
         this.initial = original;
         this.printer = printer;
         this.solve();
@@ -40,7 +42,7 @@ public class Solver
      */
     public void PrintResults()
     {
-        if(optimalMatrices.size()>0)
+        if(optimal.size()>0)
         {
             Double maxValue = 0.0;
             Matrix bestMatrix = new Matrix();
@@ -51,11 +53,12 @@ public class Solver
             printer.Print("OPTIMAL SOLUTIONS\r\n");
             printer.Print("-----------------\r\n");
 
-            for (Matrix m : optimalMatrices)
+            for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
                 printer.Print(m.toString());
                 printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
+                printer.Print(m.getSolution().toString());
                 if (objValue > maxValue)
                 {
                     maxValue = objValue;
@@ -109,7 +112,14 @@ public class Solver
      */
     private void simplex(Matrix current)
     {
-        moveToAdjBfs(current);
+        try
+        {
+            moveToAdjBfs(current);
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
     }
 
     /**
@@ -117,35 +127,47 @@ public class Solver
      */
     private void twoPhaseSimplex(Matrix current)
     {
-        // create an auxiliary row & column in the current matrix
-        current.createAuxiliary();
-
-        printer.Print("Auxiliary Created\r\n");
-        printer.Print(current.toString());
-
-        // phase 1 - solve auxiliary function
-
-        // choose variable x0 to enter the basis
-        current = selectX0Pivot(current);
-
-        // repeatedly improve aux obj W until W is zero
-        moveToAdjBfs(current);
-
-        // solve every matrix with optimal auxiliary
-        for(Matrix solvedAux:optimalMatrices)
+        try
         {
-            // remove auxiliary remnants
-            solvedAux.removeAuxiliary();
+            // create an auxiliary row & column in the current matrix
+            current.createAuxiliary();
 
-            // if the solved aux is not infeasible and not unbounded
-            if(!solvedAux.isInfeasible() && !solvedAux.isUnbounded())
+            printer.Print("Auxiliary Created\r\n");
+            printer.Print(current.toString());
+
+            // phase 1 - solve auxiliary function
+
+            // choose variable x0 to enter the basis
+            current = selectX0Pivot(current);
+
+            // repeatedly improve aux obj W until W is zero
+            moveToAdjBfs(current);
+
+            // generate list of optimal auxiliaries in order to re-purpose the optimal list
+            for (Matrix solvedAux : optimal)
             {
-                // add to list of matrices
-                tables.add(solvedAux);
-
-                // continue to solve using simplex
-                simplex(solvedAux);
+                // add to list of optimal auxiliaries (phase 1 complete)
+                optimalAux.add(solvedAux);
             }
+            optimal.clear();
+
+            // solve all optimal auxiliaries using the simplex method
+            for (Matrix solvedAux : optimalAux)
+            {
+                // remove auxiliary remnants
+                solvedAux.removeAuxiliary();
+
+                // if the solved aux is not infeasible and not unbounded
+                if (!solvedAux.isInfeasible() && !solvedAux.isUnbounded())
+                {
+                    // continue to solve using simplex
+                    simplex(solvedAux);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
         }
     }
 
@@ -177,7 +199,7 @@ public class Solver
                 }
                 printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
                 printer.Print(matrix.toString());
-                optimalMatrices.add(matrix);
+                optimal.add(matrix);
             }
             else
             {
@@ -247,46 +269,57 @@ public class Solver
      */
     private ArrayList<Point> pointsToPivot(Matrix m, ArrayList<Integer> cols)
     {
-        ArrayList<Point> validPoints = new ArrayList<Point>();
-        // find points where aij > 0
-        for(Integer i:cols)
-        {
-            // skip the first row
-            int firstRow = 1;
-            if(m.hasAuxiliary())
-                firstRow=2;
+        ArrayList<Point> pivotPoints = new ArrayList<Point>();
 
-            for(int j=firstRow;j<m.getRowSize();j++)
+        try
+        {
+            ArrayList<Point> validPoints = new ArrayList<Point>();
+            // find points where aij > 0
+            for(Integer i:cols)
             {
-                if(m.getValue(i,j)>0)
-                    validPoints.add(new Point(i,j));
+                // skip the first row
+                int firstRow = 1;
+                if(m.hasAuxiliary())
+                    firstRow=2;
+
+                for(int j=firstRow;j<m.getRowSize();j++)
+                {
+                    if(m.getValue(i,j)>0)
+                        validPoints.add(new Point(i,j));
+                }
+            }
+
+            // find minimum bj/aij for every i where aij > 0
+            Double min=Double.MAX_VALUE;
+            for(Point p:validPoints)
+            {
+                Double b = m.getValue(m.getColumnSize()-1,p.getY());
+                Double Aij = m.getValue(p.getX(),p.getY());
+
+                assert Aij != 0.0;
+
+                if(b/Aij < min)
+                    min = b/Aij;
+            }
+
+            // create list of points containing minimum bj/aij
+            for(Point p:validPoints)
+            {
+                Double b = m.getValue(m.getColumnSize()-1,p.getY());
+                Double Aij = m.getValue(p.getX(),p.getY());
+
+                if(min.equals(b / Aij))
+                    pivotPoints.add(p);
             }
         }
-
-        // find minimum bj/aij for every i where aij > 0
-        Double min=Double.MAX_VALUE;
-        for(Point p:validPoints)
+        catch (Exception ex)
         {
-            Double b = m.getValue(m.getColumnSize()-1,p.getY());
-            Double Aij = m.getValue(p.getX(),p.getY());
-
-            assert Aij != 0.0;
-
-            if(b/Aij < min)
-                min = b/Aij;
+            ExceptionHandler.Handle(ex);
         }
-
-        ArrayList<Point> pivotPoints = new ArrayList<Point>();
-        // create list of points containing minimum bj/aij
-        for(Point p:validPoints)
+        finally
         {
-            Double b = m.getValue(m.getColumnSize()-1,p.getY());
-            Double Aij = m.getValue(p.getX(),p.getY());
-
-            if(min.equals(b / Aij))
-                pivotPoints.add(p);
+            return pivotPoints;
         }
-        return pivotPoints;
     }
 
     /**
@@ -296,26 +329,35 @@ public class Solver
      */
     ArrayList<Integer> getLargestAi0(Matrix m)
     {
-        // find ALL i with largest Ai0
-        AugRow rowZero = m.getRow(0);
-
-        // find the largest value - omit b column
-        Double largest=0.0;
-        for(int i=0; i<rowZero.size()-1;i++)
-        {
-            if(rowZero.getElement(i)>largest)
-                largest = rowZero.getElement(i);
-        }
-
         ArrayList<Integer> cols = new ArrayList<Integer>();
-        // build list of columns with the value
-        for(int i=0;i<rowZero.size()-1;i++)
+        try
         {
-            Double val = rowZero.getElement(i);
-            if(val.equals(largest))
-                cols.add(i);
+            // find ALL i with largest Ai0
+            AugRow rowZero = m.getRow(0);
+
+            // find the largest value - omit b column
+            Double largest=0.0;
+            for(int i=0; i<rowZero.size()-1;i++)
+            {
+                if (rowZero.getElement(i) > largest)
+                    largest = rowZero.getElement(i);
+            }
+            // build list of columns with the value
+            for(int i=0;i<rowZero.size()-1;i++)
+            {
+                Double val = rowZero.getElement(i);
+                if(val.equals(largest))
+                    cols.add(i);
+            }
         }
-        return cols;
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
+        finally
+        {
+            return cols;
+        }
     }
 
     /**
@@ -324,25 +366,36 @@ public class Solver
      */
     private Matrix selectX0Pivot(Matrix matrix)
     {
-        // find the row of the most negative basic var.
-        // default to row 2 if no negatives found.
-        int negRow=2;
-        Double mostNegB = 0.0;
-
-        for(int j=2;j<matrix.getRowSize();j++)
+        Matrix m = new Matrix();
+        try
         {
-            if(matrix.getRow(j).getB()<mostNegB)
+            // find the row of the most negative basic var.
+            // default to row 2 if no negatives found.
+            int negRow = 2;
+            Double mostNegB = 0.0;
+
+            for (int j = 2; j < matrix.getRowSize(); j++)
             {
-                mostNegB = matrix.getRow(j).getB();
-                negRow=j;
+                if (matrix.getRow(j).getB() < mostNegB)
+                {
+                    mostNegB = matrix.getRow(j).getB();
+                    negRow = j;
+                }
             }
+
+            Point pivotPoint = new Point(0, negRow);
+
+            // pivot on x0 in the row with the most negative basic
+            m = pivot(matrix, pivotPoint).copy();
         }
-
-        Point pivotPoint = new Point(0,negRow);
-
-        // pivot on x0 in the row with the most negative basic
-        Matrix m = pivot(matrix,pivotPoint).copy();
-        return m;
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
+        finally
+        {
+            return m;
+        }
     }
 
     /**
@@ -355,13 +408,8 @@ public class Solver
         // start after obj function row
         int rowSize = initial.getRowSize();
 
-        for(int i=1;i< rowSize;i++)
-        {
-            AugRow row = initial.getRow(i);
-            double b = row.getB();
-            if(b < 0)
-                solveMethod = Method.twoPhaseSimplex;
-        }
+        if(!initial.getSolution().isBfs())
+            solveMethod = Method.twoPhaseSimplex;
 
     }
 
@@ -374,56 +422,67 @@ public class Solver
      */
     private Matrix pivot(Matrix matrix, Point p)
     {
-        printer.Print("Before pivot on "+p+"\r\n");
-        printer.Print(matrix.toString(p));
+        Matrix m = new Matrix();
 
-        int i = p.getX();
-        int j = p.getY();
-
-        // create a new copy of the matrix before pivoting
-        Matrix m = matrix.copy();
-
-        Double Aij = m.getValue(i, j);
-
-        // reduce Aij to 1
-        m.setValue(i,j,1.0);
-
-        // reduce all other elements in row j by Aij
-        AugRow rowJ = m.getRow(j);
-        for(int k=0;k<m.getColumnSize();k++)
+        try
         {
-            if(k!=i)
-            {
-                double val = rowJ.getElement(k)/Aij;
-                rowJ.setElement(k, val);
-            }
-        }
+            printer.Print("Before pivot on " + p + "\r\n");
+            printer.Print(matrix.toString(p));
 
-        // reduce elements in all other rows
-        for(int l=0;l<m.getRowSize();l++)
-        {
-            if(l!=j)
-            {
-                // find the row multiplier y in the equation Ail - Aij*y = 0; y = Ail / Aij
-                Double y = m.getValue(i,l);
-                m.setValue(i,l,0.0);
+            int i = p.getX();
+            int j = p.getY();
 
-                // reduce all other elements using multiplier
-                for(int k=0;k<m.getColumnSize();k++)
+            // create a new copy of the matrix before pivoting
+            m = matrix.copy();
+
+            Double Aij = m.getValue(i, j);
+
+            // reduce Aij to 1
+            m.setValue(i, j, 1.0);
+
+            // reduce all other elements in row j by Aij
+            AugRow rowJ = m.getRow(j);
+            for (int k = 0; k < m.getColumnSize(); k++)
+            {
+                if (k != i)
                 {
-                    if(k!=i)
-                    {
-                        // Akl = Akl - Akj*y
-                        Double val = m.getValue(k,l) - m.getValue(k,j)*y;
+                    double val = rowJ.getElement(k) / Aij;
+                    rowJ.setElement(k, val);
+                }
+            }
 
-                        m.setValue(k, l,val);
+            // reduce elements in all other rows
+            for (int l = 0; l < m.getRowSize(); l++)
+            {
+                if (l != j)
+                {
+                    // find the row multiplier y in the equation Ail - Aij*y = 0; y = Ail / Aij
+                    Double y = m.getValue(i, l);
+                    m.setValue(i, l, 0.0);
+
+                    // reduce all other elements using multiplier
+                    for (int k = 0; k < m.getColumnSize(); k++)
+                    {
+                        if (k != i)
+                        {
+                            // Akl = Akl - Akj*y
+                            Double val = m.getValue(k, l) - m.getValue(k, j) * y;
+
+                            m.setValue(k, l, val);
+                        }
                     }
                 }
             }
+            printer.Print("After Pivot\r\n");
+            printer.Print(m.toString());
         }
-        printer.Print("After Pivot\r\n");
-        printer.Print(m.toString());
-
-        return m;
+        catch (Exception ex)
+        {
+            ExceptionHandler.Handle(ex);
+        }
+        finally
+        {
+            return m;
+        }
     }
 }
