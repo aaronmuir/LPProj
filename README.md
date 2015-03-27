@@ -1,27 +1,17 @@
 Write a program to implement the simplex algorithm.
 
 1. Assume all variables have the non-negativity constraints.&nbsp;
-2. Input: each LP problem is given by a text file. The file starts with the objective function, followed by the constraints.&nbsp;
+2. Input: each LP problem is given by a text file. The file starts with the objective function, followed by the constraints.
 
-For example: the following LP problem
+For example: the following LP problem would be input as follows:
 
+|  -1 | -4  | -3  | -3  |   |   |
+|:-:|---|---|:-:|:-:|:-:|
+| 1 | 1 | 0 |-1 | >= | -1 |
+| 1  | -1 | -1  | -1  | <=  | 2 |
+| 1 | 1 | 0  |  -1 |  <= |  -1 |
+| -1  | 1  |  -1 |  1 | <=  | -2  |
 
-
-&nbsp;
-
-would be input as follows:
-
--1&nbsp;-4&nbsp;-3&nbsp;-3
-
-1&nbsp;1&nbsp;0&nbsp;-1&nbsp;>=&nbsp;-1
-
-1&nbsp;-1&nbsp;-1&nbsp;-1&nbsp;<=&nbsp;2
-
-1&nbsp;1&nbsp;0&nbsp;-1&nbsp;<=&nbsp;-1
-
--1&nbsp;1&nbsp;-1&nbsp; 1&nbsp;<=&nbsp;-2
-
-&nbsp;&nbsp;
 
 3. Output: Your program should print out the initial tableau and the tableau after each pivot. If the problem is infeasible or unbounded, the program should print out an appropriate message. You can print out the results to the standard output device – the monitor or to a file specified by the user.obj&nbsp;
 4. After reading the input file, your program should do the following:&nbsp;
