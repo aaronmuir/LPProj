@@ -48,6 +48,9 @@ public class AugRow
      */
     public void setElement(int i,Double val)
     {
+        // floor to zero if within tolerance
+        val = Eps.zero(val);
+
         elements.set(i, val);
     }
 

@@ -26,7 +26,7 @@ public class Solution
      */
     public Boolean isBfs()
     {
-        return isBasic()&& isFeasible();
+        return isBasic() && isFeasible();
     }
 
     /**

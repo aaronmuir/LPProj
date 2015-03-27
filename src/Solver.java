@@ -393,7 +393,10 @@ public class Solver
         for(int k=0;k<m.getColumnSize();k++)
         {
             if(k!=i)
-                rowJ.setElement(k,rowJ.getElement(k)/Aij);
+            {
+                double val = rowJ.getElement(k)/Aij;
+                rowJ.setElement(k, val);
+            }
         }
 
         // reduce elements in all other rows
@@ -412,6 +415,7 @@ public class Solver
                     {
                         // Akl = Akl - Akj*y
                         Double val = m.getValue(k,l) - m.getValue(k,j)*y;
+
                         m.setValue(k, l,val);
                     }
                 }

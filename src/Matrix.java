@@ -119,10 +119,11 @@ public class Matrix
 
             if (val == 0.0)
                 zeroCount++;
-            else if(val != 1.0)
-                return -1;
-            else
+            else if(val == 1.0)
                 identity = j;
+            else
+                return -1;
+
         }
 
         // there should be m-1 zeros and identity row must exist
@@ -235,10 +236,7 @@ public class Matrix
         // do not include b column in determination
         for(int i=0;i<getColumnSize()-1;i++)
         {
-            // acceptable epsilon range for zero
-            double eps = 1E-14;
-            double value = firstRow.getElement(i) - eps;
-            if(value > 0)
+            if(firstRow.getElement(i) > 0)
             {
                 Printer p = new Printer(Printer.Style.Console);
                 p.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
@@ -258,7 +256,7 @@ public class Matrix
     }
 
     /**
-     * @return the N number of columns in the matrix
+     * @return the n number of columns in the matrix
      */
     public int getColumnSize()
     {
@@ -266,7 +264,7 @@ public class Matrix
     }
 
     /**
-     * @return the M number of rows in the matrix
+     * @return the m number of rows in the matrix
      */
     public int getRowSize()
     {
@@ -279,7 +277,7 @@ public class Matrix
     public int getBasicCount(){ return getColumnSize()-slackCount; }
 
     /**
-     * flags the Matrix as unbounded
+     * unbounded flag status
      */
     public boolean isUnbounded()
     {
@@ -287,7 +285,7 @@ public class Matrix
     }
 
     /**
-     * flags the Matrix as infeasible
+     * infeasible flag status
      */
     public boolean isInfeasible()
     {
