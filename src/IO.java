@@ -51,10 +51,10 @@ public class IO
     {
         try
         {
-            fw = new FileWriter(writeLocation,true);
+            if(fw == null)
+                fw = new FileWriter(writeLocation);
             fw.write(text);
             fw.flush();
-            fw.close();
 
         } catch(IOException e)
         {
