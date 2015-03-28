@@ -11,11 +11,12 @@ public class Solution
 {
     private ArrayList<Double> elements = new ArrayList<>();
     private int slackVars;
+    private int basicVars;
 
-    public Solution(int slackVars, ArrayList<Double> elements)
+    public Solution(int slackVars,int basicVars, ArrayList<Double> elements)
     {
         this.slackVars = slackVars;
-
+        this.basicVars = basicVars;
         for(Double d: elements) this.elements.add(d);
     }
 
@@ -65,19 +66,13 @@ public class Solution
     public String toString()
     {
         String s = "";
-        int i=1;
         DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
-        for(Double d:elements)
+        for(int i = 1; i <= basicVars;i++)
         {
-            if(d!=0.0)
-            {
-                s += " x" + i + "=" + df.format(d);
-                if (i != elements.size())
-                    s += ", ";
-
-            }
-            i++;
+            s += " x" + i + "=" + df.format(elements.get(i-1));
+            if (i != elements.size())
+                s += ", ";
         }
         s+= "\r\n";
         return s;
