@@ -12,11 +12,11 @@ public class Matrix
 {
     private ArrayList<AugRow> rows;
     private boolean hasAuxiliary;
-    private Matrix _parent;
-    private ArrayList<Matrix> _children;
+    protected Matrix _parent;
+    protected ArrayList<Matrix> _children;
     private int slackCount=0;
 
-    private static int index;
+    protected static int index;
 
     private enum Result
     {
@@ -30,8 +30,9 @@ public class Matrix
     Matrix()
     {
         index++;
-        rows = new ArrayList<AugRow>();
-        _children = new ArrayList<Matrix>();
+        result = Result.OK;
+        rows = new ArrayList<>();
+        _children = new ArrayList<>();
         slackCount = 0;
     }
 
@@ -47,17 +48,16 @@ public class Matrix
         slackCount++;
 
         // add zero to all other elements
-        for(int i = 0; i < rows.size();i++)
+        for (AugRow row : rows)
         {
-            if(rows.get(i).equals(constraint))
+            if (row.equals(constraint))
             {
                 // insert new xi slack var to constraint
-                rows.get(i).insertA(1.0);
-            }
-            else
+                row.insertA(1.0);
+            } else
             {
                 // insert zero at xi
-                rows.get(i).insertA(0.0);
+                row.insertA(0.0);
             }
         }
     }
@@ -65,7 +65,7 @@ public class Matrix
     /**
      * Add a constraint to the matrix
      *
-     * @param constraint
+     * @param constraint a row of constraint entries
      */
     public void addConstraint(AugRow constraint)
     {
@@ -78,7 +78,7 @@ public class Matrix
      */
     public Solution getSolution()
     {
-        ArrayList<Double> solution = new ArrayList<Double>();
+        ArrayList<Double> solution = new ArrayList<>();
 
         assert(rows.size()>0);
         assert isValid();
@@ -103,7 +103,7 @@ public class Matrix
 
     /**
      *
-     * @param i
+     * @param i column number to search for identity rows
      * @return returns the row j that corresponds to the identity (1) in column i.
      *          otherwise returns -1;
      */
@@ -119,10 +119,11 @@ public class Matrix
 
             if (val == 0.0)
                 zeroCount++;
-            else if(val != 1.0)
-                return -1;
-            else
+            else if(val == 1.0)
                 identity = j;
+            else
+                return -1;
+
         }
 
         // there should be m-1 zeros and identity row must exist
@@ -235,22 +236,19 @@ public class Matrix
         // do not include b column in determination
         for(int i=0;i<getColumnSize()-1;i++)
         {
-            if(firstRow.getElement(i)>0)
+            if(firstRow.getElement(i) > 0)
+            {
+                Printer p = new Printer(Printer.Style.Console);
+                p.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
+                p.Print("Matrix is not optimal.\r\n\r\n");
                 return false;
+            }
         }
         return true;
     }
 
     /**
-     * @return whether or not the solution corresponds to the origin
-     */
-    public boolean isOrigin()
-    {
-        return getSolution().isOrigin();
-    }
-
-    /**
-     * @return the N number of columns in the matrix
+     * @return the n number of columns in the matrix
      */
     public int getColumnSize()
     {
@@ -258,7 +256,7 @@ public class Matrix
     }
 
     /**
-     * @return the M number of rows in the matrix
+     * @return the m number of rows in the matrix
      */
     public int getRowSize()
     {
@@ -266,12 +264,7 @@ public class Matrix
     }
 
     /**
-     * @return the number of basic variables used
-     */
-    public int getBasicCount(){ return getColumnSize()-slackCount; }
-
-    /**
-     * flags the Matrix as unbounded
+     * unbounded flag status
      */
     public boolean isUnbounded()
     {
@@ -279,7 +272,7 @@ public class Matrix
     }
 
     /**
-     * flags the Matrix as infeasible
+     * infeasible flag status
      */
     public boolean isInfeasible()
     {
@@ -320,9 +313,9 @@ public class Matrix
 
     /**
      * Get the value of element in row j column i
-     * @param i
-     * @param j
-     * @return
+     * @param i column
+     * @param j row
+     * @return value of Aij
      */
     public Double getValue(int i,int j)
     {
@@ -330,10 +323,10 @@ public class Matrix
     }
 
     /**
-     * Get the value of element in row j column i
-     * @param i
-     * @param j
-     * @return
+     * Set the value of element in row j column i
+     * @param i column
+     * @param j row
+     * @return value to be set in Aij
      */
     public void setValue(int i,int j,Double val)
     {
@@ -342,21 +335,12 @@ public class Matrix
 
     /**
      *
-     * @param j
+     * @param j row
      * @return the row at index j
      */
     public AugRow getRow(int j)
     {
         return rows.get(j);
-    }
-
-    /**
-     *
-     * @return the current instance index of the matrix
-     */
-    public int getIndex()
-    {
-        return index;
     }
 
     /**
