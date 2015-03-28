@@ -49,7 +49,6 @@ public class Solver
             for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
-                Printer.Print(m.toString());
                 Printer.Print("Optimal Value: " + df.format(objValue) + "\r\n");
                 Printer.Print(m.getSolution().toString());
             }
@@ -73,9 +72,6 @@ public class Solver
             this.determineSolveMethod();
 
             Printer.Print("Using method "+ solveMethod.name()+"...\r\n");
-
-            // copy the initial so it is preserved
-            tables.add(initial.copy());
 
             if (solveMethod == Method.simplex)
             {
@@ -121,7 +117,6 @@ public class Solver
             current.createAuxiliary();
 
             Printer.Print("Auxiliary Created\r\n");
-            Printer.Print(current.toString());
 
             // phase 1 - solve auxiliary function
 
