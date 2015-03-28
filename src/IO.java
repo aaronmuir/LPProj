@@ -8,7 +8,6 @@ import java.io.*;
 public class IO
 {
     private static String writeLocation;
-    private static BufferedWriter bw;
     private static FileWriter fw;
 
     /**
