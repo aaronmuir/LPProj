@@ -7,6 +7,10 @@ import java.io.*;
  */
 public class IO
 {
+    private static String writeLocation;
+    private static BufferedWriter bw;
+    private static FileWriter fw;
+
     /**
      * Reads the contents of file into a string variable. crlf delimited
      *
@@ -41,18 +45,30 @@ public class IO
     /**
      * Write the text to a file at fileLocation
      *
-     * @param fileLocation file path
      * @param text text to be written to the file
      */
-    public static void writeFile(String fileLocation, String text)
+    public static void writeFile(String text)
     {
         try
         {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
-            bw.write(text);
+            fw = new FileWriter(writeLocation,true);
+            fw.write(text);
+            fw.flush();
+            fw.close();
+
         } catch(IOException e)
         {
-            ExceptionHandler.Handle(e);
+
         }
+    }
+
+    public static String getWriteLocation()
+    {
+        return writeLocation;
+    }
+
+    public static void setWriteLocation(String writeLocation)
+    {
+        IO.writeLocation = writeLocation;
     }
 }
