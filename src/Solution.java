@@ -1,4 +1,3 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -66,16 +65,12 @@ public class Solution
     {
         String s = "";
         int i=1;
-        DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
         for(Float d:elements)
         {
             if(d!=0f)
             {
-                s += " x" + i + "=" + df.format(d);
-                if (i != elements.size())
-                    s += ", ";
-
+                s += " x" + i + "=" + d+"\r\n";
             }
             i++;
         }
