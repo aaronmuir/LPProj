@@ -71,7 +71,7 @@ public class Solver
         try
         {
             printer.Print("Initial Matrix\r\n");
-            printer.Print(initial.toString());
+            //printer.Print(initial.toString());
 
             this.determineSolveMethod();
 
@@ -190,7 +190,8 @@ public class Solver
                     }
                 }
                 printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
-                printer.Print(matrix.toString());
+                printer.Print(matrix.getSolution().toString());
+                //printer.Print(matrix.toString());
                 optimal.add(matrix);
             }
             else
@@ -407,7 +408,7 @@ public class Solver
         try
         {
             printer.Print("Before pivot on " + p + "\r\n");
-            printer.Print(matrix.toString(p));
+            //printer.Print(matrix.toString(p));
 
             int i = p.getX();
             int j = p.getY();
@@ -454,7 +455,7 @@ public class Solver
                 }
             }
             printer.Print("After Pivot\r\n");
-            printer.Print(m.toString());
+            //printer.Print(m.toString());
             return m;
         }
         catch (Exception ex)
