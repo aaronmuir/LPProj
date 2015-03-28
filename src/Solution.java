@@ -9,14 +9,14 @@ import java.util.ArrayList;
 
 public class Solution
 {
-    private ArrayList<Double> elements = new ArrayList<>();
+    private ArrayList<Float> elements = new ArrayList<>();
     private int slackVars;
 
-    public Solution(int slackVars, ArrayList<Double> elements)
+    public Solution(int slackVars, ArrayList<Float> elements)
     {
         this.slackVars = slackVars;
 
-        for(Double d: elements) this.elements.add(d);
+        for(Float f: elements) this.elements.add(f);
     }
 
     /**
@@ -35,9 +35,9 @@ public class Solution
     public Boolean isBasic()
     {
         int count = 0;
-        for (Double element : elements)
+        for (Float element : elements)
         {
-            if (element == 0.0)
+            if (element == 0f)
                 count++;
         }
         return count<=slackVars;
@@ -50,9 +50,9 @@ public class Solution
     public Boolean isFeasible()
     {
         int count = 0;
-        for (Double element : elements)
+        for (Float element : elements)
         {
-            if (element < 0)
+            if (element < 0f)
                 count++;
         }
         return count==0;
@@ -68,9 +68,9 @@ public class Solution
         int i=1;
         DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
-        for(Double d:elements)
+        for(Float d:elements)
         {
-            if(d!=0.0)
+            if(d!=0f)
             {
                 s += " x" + i + "=" + df.format(d);
                 if (i != elements.size())

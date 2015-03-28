@@ -12,7 +12,7 @@ import java.util.ArrayList;
  */
 public class AugRow
 {
-    private ArrayList<Double> elements;
+    private ArrayList<Float> elements;
 
     private Boolean negate;
     private Boolean constraint;
@@ -30,7 +30,7 @@ public class AugRow
      *
      * @param val The value of the element to add
      */
-    public void addElement(Double val)
+    public void addElement(Float val)
     {
         elements.add(val);
     }
@@ -38,7 +38,7 @@ public class AugRow
     /**
      * @return element at index i
      */
-    public Double getElement(int i)
+    public Float getElement(int i)
     {
         return elements.get(i);
     }
@@ -46,7 +46,7 @@ public class AugRow
     /**
      * set the value of element at index i
      */
-    public void setElement(int i,Double val)
+    public void setElement(int i,Float val)
     {
         // floor to zero if within tolerance
         val = Eps.zero(val);
@@ -60,7 +60,7 @@ public class AugRow
      *
      * @param val the value to be inserted at the end of A
      */
-    public void insertA(Double val)
+    public void insertA(Float val)
     {
         elements.add(elements.size() - 1, val);
     }
@@ -70,7 +70,7 @@ public class AugRow
      *
      * @param val value to be inserted at the beginning of A
      */
-    public void insertFront(Double val)
+    public void insertFront(Float val)
     {
         elements.add(0,val);
     }
@@ -97,7 +97,7 @@ public class AugRow
     public AugRow copy()
     {
         AugRow copy = new AugRow();
-        for(Double d : this.elements)
+        for(Float d : this.elements)
         {
             copy.elements.add(d);
         }
@@ -112,7 +112,7 @@ public class AugRow
     {
         for(int i=0;i< elements.size();i++)
         {
-            elements.set(i, elements.get(i) *-1.0);
+            elements.set(i, elements.get(i) *-1);
         }
     }
 
@@ -151,7 +151,7 @@ public class AugRow
      *
      * @return the value of b - last element in the augmented row
      */
-    public Double getB()
+    public Float getB()
     {
         return  elements.get(elements.size()-1);
     }
