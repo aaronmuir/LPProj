@@ -233,12 +233,11 @@ public class Solver
                 }
                 Printer.Print("\r\n");
 
-                for (Point p : points)
+                for(Point p:points)
                 {
-                    Matrix m = pivot(matrix, p).copy();
-                    moveToAdjBfs(m);
+                    Matrix m = matrix.copy();
+                    moveToAdjBfs(pivot(m,p));
                 }
-
             }
         }
         catch (Exception ex)
@@ -443,8 +442,6 @@ public class Solver
                     }
                 }
             }
-            //printer.Print("After Pivot\r\n");
-            //printer.Print(m.toString());
             return m;
         }
         catch (Exception ex)
