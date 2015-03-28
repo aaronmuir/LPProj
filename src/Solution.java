@@ -71,7 +71,7 @@ public class Solution
         for(int i = 1; i <= basicVars;i++)
         {
             s += " x" + i + "=" + df.format(elements.get(i-1));
-            if (i != elements.size())
+            if (i != basicVars)
                 s += ", ";
         }
         s+= "\r\n";
