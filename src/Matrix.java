@@ -97,7 +97,7 @@ public class Matrix
                 solution.add(0.0);
             }
         }
-        return new Solution(slackCount,solution);
+        return new Solution(slackCount,getColumnSize()-slackCount-1,solution);
     }
 
 

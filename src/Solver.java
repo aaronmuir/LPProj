@@ -58,7 +58,6 @@ public class Solver
             for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
-                printer.Print(m.toString());
                 printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
                 printer.Print(m.getSolution().toString());
             }
