@@ -69,10 +69,8 @@ public class Solution
         String s = "";
 
         for(int i = 1; i <= basicVars;i++)
-        {
-            if(i != basicVars)
-                s += " x" + i + "=" + elements.get(i-1) +"\r\n";
-        }
+            s += " x" + i + "=" + elements.get(i-1)+"\r\n";
+
         s+= "\r\n";
         return s;
     }
