@@ -1,6 +1,7 @@
 import java.util.ArrayList;
 /**
  * Aaron Muir
+ * Adam Julovich
  * CS 309
  * LP Project
  */
@@ -97,7 +98,7 @@ public class Matrix
                 solution.add(0f);
             }
         }
-        return new Solution(slackCount,solution);
+        return new Solution(slackCount,getColumnSize()-slackCount-1,solution);
     }
 
 

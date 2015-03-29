@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 /**
  * Aaron Muir
+ * Adam Julovich
  * CS 309
  * LP Project
  */
@@ -10,10 +11,12 @@ public class Solution
 {
     private ArrayList<Float> elements = new ArrayList<>();
     private int slackVars;
+    private int basicVars;
 
-    public Solution(int slackVars, ArrayList<Float> elements)
+    public Solution(int slackVars,int basicVars, ArrayList<Float> elements)
     {
         this.slackVars = slackVars;
+        this.basicVars = basicVars;
 
         for(Float f: elements) this.elements.add(f);
     }
@@ -64,15 +67,11 @@ public class Solution
     public String toString()
     {
         String s = "";
-        int i=1;
 
-        for(Float d:elements)
+        for(int i = 1; i <= basicVars;i++)
         {
-            if(d!=0f)
-            {
-                s += " x" + i + "=" + d+"\r\n";
-            }
-            i++;
+            if(i != basicVars)
+                s += " x" + i + "=" + elements.get(i-1) +"\r\n";
         }
         s+= "\r\n";
         return s;

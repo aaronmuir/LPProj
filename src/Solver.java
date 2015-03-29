@@ -3,6 +3,7 @@ import java.util.ArrayList;
 
 /**
  * Aaron Muir
+ * Adam Julovich
  * CS 309
  * LP Project
  */
@@ -12,6 +13,9 @@ public class Solver
     protected ArrayList<Matrix> tables;
     private ArrayList<Matrix> optimal;
     private ArrayList<Matrix> optimalAux;
+    private int infeasibleCount;
+    private int unboundedCount;
+    private int optimalCount;
 
     private enum Method
     {
@@ -29,6 +33,11 @@ public class Solver
         optimal = new ArrayList<>();
         optimalAux = new ArrayList<>();
         this.initial = original;
+
+        infeasibleCount=0;
+        unboundedCount=0;
+        optimalCount=0;
+
         this.solve();
     }
 
@@ -46,16 +55,22 @@ public class Solver
             Printer.Print("OPTIMAL SOLUTIONS\r\n");
             Printer.Print("-----------------\r\n");
 
+            Printer.Print("Optimal Matrices: "+optimalCount+"\r\n");
             for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
-                Printer.Print("Optimal Value: " + df.format(objValue) + "\r\n");
+                Printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
                 Printer.Print(m.getSolution().toString());
             }
         }
         else
         {
+            Printer.Print("-----------------\r\n");
             Printer.Print("NO SOLUTIONS FOUND\r\n");
+            Printer.Print("-----------------\r\n");
+
+            Printer.Print("Infeasible Matrices: "+infeasibleCount+"\r\n");
+            Printer.Print("Unbounded Matrices: "+unboundedCount+"\r\n");
         }
     }
 
@@ -133,6 +148,7 @@ public class Solver
                 optimalAux.add(solvedAux);
             }
             optimal.clear();
+            optimalCount=0;
 
             // solve all optimal auxiliaries using the simplex method
             for (Matrix solvedAux : optimalAux)
@@ -178,12 +194,13 @@ public class Solver
                         Printer.Print("Matrix is infeasible.\r\n");
                         //printer.Print(matrix.toString());
                         matrix.flagInfeasible();
+                        infeasibleCount++;
                         return;
                     }
                 }
                 Printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
                 Printer.Print(matrix.getSolution().toString());
-                //printer.Print(matrix.toString());
+                optimalCount++;
                 optimal.add(matrix);
             }
             else
@@ -197,6 +214,7 @@ public class Solver
                 {
                     matrix.flagUnbounded();
                     Printer.Print("Matrix is unbounded.\r\n");
+                    unboundedCount++;
                     return;
                 }
 
