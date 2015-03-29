@@ -11,35 +11,58 @@ public class Printer
         Console,
         File
     }
-    private Style style;
+    public static Style style;
 
-    private String file;
+    public static Style getStyle()
+    {
+        return style;
+    }
+
+    public static void setStyle(Style style)
+    {
+        Printer.style = style;
+    }
+
+    public static String getFile()
+    {
+        return file;
+    }
+
+    public static void setFile(String file)
+    {
+        Printer.file = file;
+    }
+
+    public static String file;
     private static String defaultFile = "output.txt";
     private static Style defaultStyle = Style.Console;
 
-    public Printer()
+    public static void Load()
     {
-        this(defaultStyle,defaultFile);
+        Load(defaultStyle,defaultFile);
     }
-    public Printer(String file)
+    public static void Load(String file)
     {
-        this(Style.File,file);
+        Load(Style.File, file);
     }
-    public Printer(Style style)
+    public static void Load(Style style)
     {
-        this(style,defaultFile);
+        Load(style, defaultFile);
     }
-    private Printer(Style style, String file)
+    private static void Load(Style style, String file)
     {
-        this.style = style;
-        this.file = file;
+        Printer.style = style;
+        Printer.file = file;
     }
 
-    public void Print(String text)
+    public static void Print(String text)
     {
         if(style == Style.Console)
             System.out.print(text);
         else if(style == Style.File)
-            IO.writeFile(file,text);
+        {
+            IO.setWriteLocation(file);
+            IO.writeFile(text);
+        }
     }
 }

@@ -24,21 +24,19 @@ public class Solver
     }
     private Method solveMethod;
 
-    private Printer printer;
-
     /**
      * LP solving algorithms
      */
-    public Solver(Matrix original, Printer printer)
+    public Solver(Matrix original)
     {
         tables = new ArrayList<>();
         optimal = new ArrayList<>();
         optimalAux = new ArrayList<>();
         this.initial = original;
-        this.printer = printer;
         infeasibleCount=0;
         unboundedCount=0;
         optimalCount=0;
+        
         this.solve();
     }
 
@@ -51,26 +49,26 @@ public class Solver
         {
             DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
-            printer.Print("\r\n");
-            printer.Print("-----------------\r\n");
-            printer.Print("OPTIMAL SOLUTIONS\r\n");
-            printer.Print("-----------------\r\n");
-            printer.Print("Optimal Matrices: "+optimalCount+"\r\n");
+            Printer.Print("\r\n");
+            Printer.Print("-----------------\r\n");
+            Printer.Print("OPTIMAL SOLUTIONS\r\n");
+            Printer.Print("-----------------\r\n");
+            Printer.Print("Optimal Matrices: "+optimalCount+"\r\n");
             for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
-                printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
-                printer.Print(m.getSolution().toString());
+                Printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
+                Printer.Print(m.getSolution().toString());
             }
         }
         else
         {
-            printer.Print("-----------------\r\n");
-            printer.Print("NO SOLUTIONS FOUND\r\n");
-            printer.Print("-----------------\r\n");
+            Printer.Print("-----------------\r\n");
+            Printer.Print("NO SOLUTIONS FOUND\r\n");
+            Printer.Print("-----------------\r\n");
 
-            printer.Print("Infeasible Matrices: "+infeasibleCount+"\r\n");
-            printer.Print("Unbounded Matrices: "+unboundedCount+"\r\n");
+            Printer.Print("Infeasible Matrices: "+infeasibleCount+"\r\n");
+            Printer.Print("Unbounded Matrices: "+unboundedCount+"\r\n");
         }
     }
 
@@ -81,15 +79,12 @@ public class Solver
     {
         try
         {
-            printer.Print("Initial Matrix\r\n");
-            printer.Print(initial.toString());
+            Printer.Print("Initial Matrix\r\n");
+            //printer.Print(initial.toString());
 
             this.determineSolveMethod();
 
-            printer.Print("Using method "+ solveMethod.name()+"...\r\n");
-
-            // copy the initial so it is preserved
-            tables.add(initial.copy());
+            Printer.Print("Using method " + solveMethod.name() + "...\r\n");
 
             if (solveMethod == Method.simplex)
             {
@@ -134,8 +129,7 @@ public class Solver
             // create an auxiliary row & column in the current matrix
             current.createAuxiliary();
 
-            printer.Print("Auxiliary Created\r\n");
-            printer.Print(current.toString());
+            Printer.Print("Auxiliary Created\r\n");
 
             // phase 1 - solve auxiliary function
 
@@ -182,7 +176,7 @@ public class Solver
      */
     private void moveToAdjBfs(Matrix matrix)
     {
-        tables.add(matrix);
+        //tables.add(matrix);
         try
         {
             // a. choose column i to enter the basis by finding largest Ai0
@@ -195,15 +189,15 @@ public class Solver
                 {
                     if (matrix.getObjValue() != 0)
                     {
-                        printer.Print("Matrix is infeasible.\r\n");
-                        printer.Print(matrix.toString());
+                        Printer.Print("Matrix is infeasible.\r\n");
+                        //printer.Print(matrix.toString());
                         matrix.flagInfeasible();
                         infeasibleCount++;
                         return;
                     }
                 }
-                printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
-                printer.Print(matrix.toString());
+                Printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
+                Printer.Print(matrix.toString());
                 optimalCount++;
                 optimal.add(matrix);
             }
@@ -217,7 +211,7 @@ public class Solver
                 if (points.size() <= 0)
                 {
                     matrix.flagUnbounded();
-                    printer.Print("Matrix is unbounded.\r\n");
+                    Printer.Print("Matrix is unbounded.\r\n");
                     unboundedCount++;
                     return;
                 }
@@ -248,19 +242,18 @@ public class Solver
                 // pivot on every aij and move to adj bfs on resulting matrices
                 // prioritize x0 points
 
-                printer.Print("Found the following points to pivot on: ");
+                Printer.Print("Found the following points to pivot on: ");
                 for (Point p : points)
                 {
-                    printer.Print(p.toString() + " ");
+                    Printer.Print(p.toString() + " ");
                 }
-                printer.Print("\r\n");
+                Printer.Print("\r\n");
 
-                for (Point p : points)
+                for(Point p:points)
                 {
-                    Matrix m = pivot(matrix, p).copy();
-                    moveToAdjBfs(m);
+                    Matrix m = matrix.copy();
+                    moveToAdjBfs(pivot(m,p));
                 }
-
             }
         }
         catch (Exception ex)
@@ -298,13 +291,13 @@ public class Solver
             }
 
             // find minimum bj/aij for every i where aij > 0
-            Double min=Double.MAX_VALUE;
+            Float min=Float.MAX_VALUE;
             for(Point p:validPoints)
             {
-                Double b = m.getValue(m.getColumnSize()-1,p.getY());
-                Double Aij = m.getValue(p.getX(),p.getY());
+                Float b = m.getValue(m.getColumnSize()-1,p.getY());
+                Float Aij = m.getValue(p.getX(),p.getY());
 
-                assert Aij != 0.0;
+                assert Aij != 0f;
 
                 if(b/Aij < min)
                     min = b/Aij;
@@ -313,8 +306,8 @@ public class Solver
             // create list of points containing minimum bj/aij
             for(Point p:validPoints)
             {
-                Double b = m.getValue(m.getColumnSize()-1,p.getY());
-                Double Aij = m.getValue(p.getX(),p.getY());
+                Float b = m.getValue(m.getColumnSize()-1,p.getY());
+                Float Aij = m.getValue(p.getX(),p.getY());
 
                 if(min.equals(b / Aij))
                     pivotPoints.add(p);
@@ -342,7 +335,7 @@ public class Solver
             AugRow rowZero = m.getRow(0);
 
             // find the largest value - omit b column
-            Double largest=0.0;
+            Float largest=0f;
             for(int i=0; i<rowZero.size()-1;i++)
             {
                 if (rowZero.getElement(i) > largest)
@@ -351,7 +344,7 @@ public class Solver
             // build list of columns with the value
             for(int i=0;i<rowZero.size()-1;i++)
             {
-                Double val = rowZero.getElement(i);
+                Float val = rowZero.getElement(i);
                 if(val.equals(largest))
                     cols.add(i);
             }
@@ -375,7 +368,7 @@ public class Solver
             // find the row of the most negative basic var.
             // default to row 2 if no negatives found.
             int negRow = 2;
-            Double mostNegB = 0.0;
+            Float mostNegB = 0f;
 
             for (int j = 2; j < matrix.getRowSize(); j++)
             {
@@ -414,26 +407,23 @@ public class Solver
      * Pivot on an element in row j column i reducing xi to an identity vector.
      * xi enters the basis.
      *
-     * @param matrix matrix to pivot on
+     * @param m matrix to pivot on
      * @param p point to pivot on
      */
-    private Matrix pivot(Matrix matrix, Point p)
+    private Matrix pivot(Matrix m, Point p)
     {
         try
         {
-            printer.Print("Before pivot on " + p + "\r\n");
-            printer.Print(matrix.toString(p));
+            Printer.Print("Before pivot on " + p + "\r\n");
+            //printer.Print(matrix.toString(p));
 
             int i = p.getX();
             int j = p.getY();
 
-            // create a new copy of the matrix before pivoting
-            Matrix m = matrix.copy();
-
-            Double Aij = m.getValue(i, j);
+            Float Aij = m.getValue(i, j);
 
             // reduce Aij to 1
-            m.setValue(i, j, 1.0);
+            m.setValue(i, j, 1f);
 
             // reduce all other elements in row j by Aij
             AugRow rowJ = m.getRow(j);
@@ -441,7 +431,7 @@ public class Solver
             {
                 if (k != i)
                 {
-                    double val = rowJ.getElement(k) / Aij;
+                    Float val = rowJ.getElement(k) / Aij;
                     rowJ.setElement(k, val);
                 }
             }
@@ -452,8 +442,8 @@ public class Solver
                 if (l != j)
                 {
                     // find the row multiplier y in the equation Ail - Aij*y = 0; y = Ail / Aij
-                    Double y = m.getValue(i, l);
-                    m.setValue(i, l, 0.0);
+                    Float y = m.getValue(i, l);
+                    m.setValue(i, l, 0f);
 
                     // reduce all other elements using multiplier
                     for (int k = 0; k < m.getColumnSize(); k++)
@@ -461,15 +451,13 @@ public class Solver
                         if (k != i)
                         {
                             // Akl = Akl - Akj*y
-                            Double val = m.getValue(k, l) - m.getValue(k, j) * y;
+                            Float val = m.getValue(k, l) - m.getValue(k, j) * y;
 
                             m.setValue(k, l, val);
                         }
                     }
                 }
             }
-            printer.Print("After Pivot\r\n");
-            printer.Print(m.toString());
             return m;
         }
         catch (Exception ex)

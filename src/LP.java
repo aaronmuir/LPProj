@@ -28,10 +28,10 @@ public class LP
                 Matrix initMatrix = convertToMatrix(fileString);
 
                 // configure a printer
-                Printer printer = new Printer(Printer.Style.Console);
+                Printer.Load("C:\\LP\\USDA\\Log");
 
                 // solve matrix
-                Solver solver = new Solver(initMatrix,printer);
+                Solver solver = new Solver(initMatrix);
 
                 // output results
                 solver.PrintResults();
@@ -120,7 +120,7 @@ public class LP
         else
         {
             // since bfs, add zero for b
-            row.addElement(0.0);
+            row.addElement(0f);
             axb.setObjectiveRow(row);
         }
     }

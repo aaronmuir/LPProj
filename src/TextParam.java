@@ -19,7 +19,7 @@ public class TextParam
         try
         {
             // if the element is a number, add it to the row
-            Double val = Double.parseDouble(param);
+            Float val = Float.parseFloat(param);
             row.addElement(val);
         }
         catch (NumberFormatException ex)

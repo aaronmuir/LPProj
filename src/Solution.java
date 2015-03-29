@@ -1,4 +1,3 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -10,15 +9,16 @@ import java.util.ArrayList;
 
 public class Solution
 {
-    private ArrayList<Double> elements = new ArrayList<>();
+    private ArrayList<Float> elements = new ArrayList<>();
     private int slackVars;
     private int basicVars;
 
-    public Solution(int slackVars,int basicVars, ArrayList<Double> elements)
+    public Solution(int slackVars,int basicVars, ArrayList<Float> elements)
     {
         this.slackVars = slackVars;
         this.basicVars = basicVars;
-        for(Double d: elements) this.elements.add(d);
+
+        for(Float f: elements) this.elements.add(f);
     }
 
     /**
@@ -37,9 +37,9 @@ public class Solution
     public Boolean isBasic()
     {
         int count = 0;
-        for (Double element : elements)
+        for (Float element : elements)
         {
-            if (element == 0.0)
+            if (element == 0f)
                 count++;
         }
         return count<=slackVars;
@@ -52,9 +52,9 @@ public class Solution
     public Boolean isFeasible()
     {
         int count = 0;
-        for (Double element : elements)
+        for (Float element : elements)
         {
-            if (element < 0)
+            if (element < 0f)
                 count++;
         }
         return count==0;
@@ -67,13 +67,11 @@ public class Solution
     public String toString()
     {
         String s = "";
-        DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
         for(int i = 1; i <= basicVars;i++)
         {
-            s += " x" + i + "=" + df.format(elements.get(i-1));
-            if (i != basicVars)
-                s += ", ";
+            if(i != basicVars)
+                s += " x" + i + "=" + elements.get(i-1) +"\r\n";
         }
         s+= "\r\n";
         return s;

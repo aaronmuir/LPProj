@@ -54,11 +54,11 @@ public class Matrix
             if (row.equals(constraint))
             {
                 // insert new xi slack var to constraint
-                row.insertA(1.0);
+                row.insertA(1f);
             } else
             {
                 // insert zero at xi
-                row.insertA(0.0);
+                row.insertA(0f);
             }
         }
     }
@@ -79,7 +79,7 @@ public class Matrix
      */
     public Solution getSolution()
     {
-        ArrayList<Double> solution = new ArrayList<>();
+        ArrayList<Float> solution = new ArrayList<>();
 
         assert(rows.size()>0);
         assert isValid();
@@ -95,7 +95,7 @@ public class Matrix
             }
             else
             {
-                solution.add(0.0);
+                solution.add(0f);
             }
         }
         return new Solution(slackCount,getColumnSize()-slackCount-1,solution);
@@ -116,11 +116,11 @@ public class Matrix
         // move through each row (Aij)
         for(int j = 0; j < rows.size();j++)
         {
-            Double val = rows.get(j).getElement(i);
+            Float val = rows.get(j).getElement(i);
 
-            if (val == 0.0)
+            if (val == 0f)
                 zeroCount++;
-            else if(val == 1.0)
+            else if(val == 1f)
                 identity = j;
             else
                 return -1;
@@ -185,17 +185,17 @@ public class Matrix
             for (AugRow row:rows)
             {
                 if(row.equals(getObjectiveRow()))
-                    row.insertFront(0.0);
+                    row.insertFront(0f);
                 else
-                    row.insertFront(-1.0);
+                    row.insertFront(-1f);
             }
 
             // add the new aux with x0=-1 in the new column and zero all in other columns
             AugRow aux = new AugRow();
-            aux.addElement(-1.0);
+            aux.addElement(-1f);
             for(int i=0;i<getColumnSize()-1;i++)
             {
-                aux.addElement(0.0);
+                aux.addElement(0f);
             }
             rows.add(0,aux);
 
@@ -239,9 +239,8 @@ public class Matrix
         {
             if(firstRow.getElement(i) > 0)
             {
-                Printer p = new Printer(Printer.Style.Console);
-                p.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
-                p.Print("Matrix is not optimal.\r\n\r\n");
+                Printer.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
+                Printer.Print("Matrix is not optimal.\r\n\r\n");
                 return false;
             }
         }
@@ -318,7 +317,7 @@ public class Matrix
      * @param j row
      * @return value of Aij
      */
-    public Double getValue(int i,int j)
+    public Float getValue(int i,int j)
     {
         return rows.get(j).getElement(i);
     }
@@ -329,7 +328,7 @@ public class Matrix
      * @param j row
      * @return value to be set in Aij
      */
-    public void setValue(int i,int j,Double val)
+    public void setValue(int i,int j,Float val)
     {
         rows.get(j).setElement(i,val);
     }
