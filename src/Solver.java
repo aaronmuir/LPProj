@@ -42,7 +42,7 @@ public class Solver
     }
 
     /**
-     * Print the results of the solve
+     * Log the results of the solve
      */
     public void PrintResults()
     {
@@ -50,27 +50,28 @@ public class Solver
         {
             DecimalFormat df = new DecimalFormat(" #0.00;-#");
 
-            Printer.Print("\r\n");
-            Printer.Print("-----------------\r\n");
-            Printer.Print("OPTIMAL SOLUTIONS\r\n");
-            Printer.Print("-----------------\r\n");
+            Printer.Log("\r\n");
+            Printer.Log("-----------------\r\n");
+            Printer.Log("OPTIMAL SOLUTIONS\r\n");
+            Printer.Log("-----------------\r\n");
 
-            Printer.Print("Optimal Matrices: "+optimalCount+"\r\n");
+            Printer.Log("Optimal Matrices: " + optimalCount + "\r\n");
             for (Matrix m : optimal)
             {
                 Double objValue = m.getObjValue();
-                Printer.Print("Optimal Value: " + df.format(objValue)+"\r\n");
-                Printer.Print(m.getSolution().toString());
+                Printer.Log("Optimal Value: " + df.format(objValue) + "\r\n");
+                Printer.Log(m.getSolution().toString());
+                Printer.Report(m.getSolution().toString());
             }
         }
         else
         {
-            Printer.Print("-----------------\r\n");
-            Printer.Print("NO SOLUTIONS FOUND\r\n");
-            Printer.Print("-----------------\r\n");
+            Printer.Log("-----------------\r\n");
+            Printer.Log("NO SOLUTIONS FOUND\r\n");
+            Printer.Log("-----------------\r\n");
 
-            Printer.Print("Infeasible Matrices: "+infeasibleCount+"\r\n");
-            Printer.Print("Unbounded Matrices: "+unboundedCount+"\r\n");
+            Printer.Log("Infeasible Matrices: " + infeasibleCount + "\r\n");
+            Printer.Log("Unbounded Matrices: " + unboundedCount + "\r\n");
         }
     }
 
@@ -81,12 +82,11 @@ public class Solver
     {
         try
         {
-            Printer.Print("Initial Matrix\r\n");
-            //printer.Print(initial.toString());
+            Printer.Log("Initial Matrix\r\n");
 
             this.determineSolveMethod();
 
-            Printer.Print("Using method "+ solveMethod.name()+"...\r\n");
+            Printer.Log("Using method " + solveMethod.name() + "...\r\n");
 
             if (solveMethod == Method.simplex)
             {
@@ -131,7 +131,7 @@ public class Solver
             // create an auxiliary row & column in the current matrix
             current.createAuxiliary();
 
-            Printer.Print("Auxiliary Created\r\n");
+            Printer.Log("Auxiliary Created\r\n");
 
             // phase 1 - solve auxiliary function
 
@@ -191,15 +191,15 @@ public class Solver
                 {
                     if (matrix.getObjValue() != 0)
                     {
-                        Printer.Print("Matrix is infeasible.\r\n");
-                        //printer.Print(matrix.toString());
+                        Printer.Log("Matrix is infeasible.\r\n");
+                        //printer.Log(matrix.toString());
                         matrix.flagInfeasible();
                         infeasibleCount++;
                         return;
                     }
                 }
-                Printer.Print("Matrix is optimal. Adding to list of optimal solutions.\r\n");
-                Printer.Print(matrix.getSolution().toString());
+                Printer.Log("Matrix is optimal. Adding to list of optimal solutions.\r\n");
+                Printer.Log(matrix.getSolution().toString());
                 optimalCount++;
                 optimal.add(matrix);
             }
@@ -213,7 +213,7 @@ public class Solver
                 if (points.size() <= 0)
                 {
                     matrix.flagUnbounded();
-                    Printer.Print("Matrix is unbounded.\r\n");
+                    Printer.Log("Matrix is unbounded.\r\n");
                     unboundedCount++;
                     return;
                 }
@@ -244,12 +244,12 @@ public class Solver
                 // pivot on every aij and move to adj bfs on resulting matrices
                 // prioritize x0 points
 
-                Printer.Print("Found the following points to pivot on: ");
+                Printer.Log("Found the following points to pivot on: ");
                 for (Point p : points)
                 {
-                    Printer.Print(p.toString() + " ");
+                    Printer.Log(p.toString() + " ");
                 }
-                Printer.Print("\r\n");
+                Printer.Log("\r\n");
 
                 for(Point p:points)
                 {
@@ -416,8 +416,8 @@ public class Solver
     {
         try
         {
-            Printer.Print("Before pivot on " + p + "\r\n");
-            //printer.Print(matrix.toString(p));
+            Printer.Log("Before pivot on " + p + "\r\n");
+            //printer.Log(matrix.toString(p));
 
             int i = p.getX();
             int j = p.getY();

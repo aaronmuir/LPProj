@@ -28,7 +28,8 @@ public class LP
                 Matrix initMatrix = convertToMatrix(fileString);
 
                 // configure a printer
-                Printer.Load("C:\\LP\\USDA\\Log");
+                Printer.Load("C:\\LP\\Log");
+                Printer.setReportFile("C:\\LP\\Report");
 
                 // solve matrix
                 Solver solver = new Solver(initMatrix);

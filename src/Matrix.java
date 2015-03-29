@@ -239,8 +239,8 @@ public class Matrix
         {
             if(firstRow.getElement(i) > 0)
             {
-                Printer.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
-                Printer.Print("Matrix is not optimal.\r\n\r\n");
+                Printer.Log("Element " + i + " in the top row is greater than zero. " + firstRow.getElement(i).toString() + "\r\n");
+                Printer.Log("Matrix is not optimal.\r\n\r\n");
                 return false;
             }
         }

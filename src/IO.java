@@ -1,4 +1,8 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Aaron Muir
@@ -8,7 +12,7 @@ import java.io.*;
  */
 public class IO
 {
-    private static String writeLocation;
+    private static ArrayList<String> files = new ArrayList<>();
     private static FileWriter fw;
 
     /**
@@ -47,12 +51,20 @@ public class IO
      *
      * @param text text to be written to the file
      */
-    public static void writeFile(String text)
+    public static void writeFile(String text, String fileLocation)
     {
         try
         {
-            if(fw == null)
-                fw = new FileWriter(writeLocation);
+            if(files.contains(fileLocation))
+            {
+                fw = new FileWriter(fileLocation,true);
+            }
+            else
+            {
+                fw = new FileWriter(fileLocation);
+                files.add(fileLocation);
+            }
+
             fw.write(text);
             fw.flush();
 
@@ -60,15 +72,5 @@ public class IO
         {
 
         }
-    }
-
-    public static String getWriteLocation()
-    {
-        return writeLocation;
-    }
-
-    public static void setWriteLocation(String writeLocation)
-    {
-        IO.writeLocation = writeLocation;
     }
 }
