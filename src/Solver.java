@@ -73,6 +73,7 @@ public class Solver
             Printer.Log("Infeasible Matrices: " + infeasibleCount + "\r\n");
             Printer.Log("Unbounded Matrices: " + unboundedCount + "\r\n");
         }
+        Printer.Log("Times Floored to Zero: "+Eps.getZeroCount()+"\r\n");
     }
 
     /**
