@@ -1,7 +1,7 @@
 Implements the simplex algorithm.
 
 Assumes all variables have the non-negative constraints.
-Each LP problem is input by a text file. The file starts with the objective function, followed by the constraints.
+Each LP problem is input through the use of formatted text file. The file starts with the objective function (function to maximize), followed by the constraints.
 
 Input example:
 
