@@ -9,16 +9,16 @@ import java.util.ArrayList;
 
 public class Solution
 {
-    private ArrayList<Float> elements = new ArrayList<>();
+    private ArrayList<BigFraction> elements = new ArrayList<>();
     private int slackVars;
     private int basicVars;
 
-    public Solution(int slackVars,int basicVars, ArrayList<Float> elements)
+    public Solution(int slackVars,int basicVars, ArrayList<BigFraction> elements)
     {
         this.slackVars = slackVars;
         this.basicVars = basicVars;
 
-        for(Float f: elements) this.elements.add(f);
+        for(BigFraction f: elements) this.elements.add(f);
     }
 
     /**
@@ -37,9 +37,9 @@ public class Solution
     public Boolean isBasic()
     {
         int count = 0;
-        for (Float element : elements)
+        for (BigFraction element : elements)
         {
-            if (element == 0f)
+            if (element == BigFraction.ZERO)
                 count++;
         }
         return count<=slackVars;
@@ -52,9 +52,9 @@ public class Solution
     public Boolean isFeasible()
     {
         int count = 0;
-        for (Float element : elements)
+        for (BigFraction element : elements)
         {
-            if (element < 0f)
+            if (element.compareTo(BigFraction.ZERO) < 0)
                 count++;
         }
         return count==0;
@@ -69,7 +69,7 @@ public class Solution
         String s = "";
 
         for(int i = 1; i <= basicVars;i++)
-            if(elements.get(i-1)!=0)
+            if(!elements.get(i-1).equals(BigFraction.ZERO))
                 s += " x" + i + "=" + elements.get(i-1)+"\r\n";
 
         s+= "\r\n";

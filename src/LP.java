@@ -121,7 +121,7 @@ public class LP
         else
         {
             // since bfs, add zero for b
-            row.addElement(0f);
+            row.addElement(BigFraction.ZERO);
             axb.setObjectiveRow(row);
         }
     }

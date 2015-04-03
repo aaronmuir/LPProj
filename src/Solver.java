@@ -73,7 +73,6 @@ public class Solver
             Printer.Log("Infeasible Matrices: " + infeasibleCount + "\r\n");
             Printer.Log("Unbounded Matrices: " + unboundedCount + "\r\n");
         }
-        Printer.Log("Times Floored to Zero: "+Eps.getZeroCount()+"\r\n");
     }
 
     /**
@@ -200,7 +199,6 @@ public class Solver
                     }
                 }
                 Printer.Log("Matrix is optimal. Adding to list of optimal solutions.\r\n");
-                Printer.Log(matrix.getSolution().toString());
                 optimalCount++;
                 optimal.add(matrix);
             }
@@ -226,7 +224,7 @@ public class Solver
                 {
                     if (matrix.hasAuxiliary())
                     {
-                        if (matrix.getRow(p.getY()).getElement(0) == 1)
+                        if (matrix.getRow(p.getY()).getElement(0).equals(BigFraction.ONE))
                         {
                             x0points.add(p);
                         }
@@ -244,13 +242,6 @@ public class Solver
                 // c. for each aij in list
                 // pivot on every aij and move to adj bfs on resulting matrices
                 // prioritize x0 points
-
-                Printer.Log("Found the following points to pivot on: ");
-                for (Point p : points)
-                {
-                    Printer.Log(p.toString() + " ");
-                }
-                Printer.Log("\r\n");
 
                 for(Point p:points)
                 {
@@ -288,31 +279,36 @@ public class Solver
 
                 for(int j=firstRow;j<m.getRowSize();j++)
                 {
-                    if(m.getValue(i,j)>0)
+                    if(m.getValue(i,j).compareTo(BigFraction.ZERO)>0)
                         validPoints.add(new Point(i,j));
                 }
             }
 
             // find minimum bj/aij for every i where aij > 0
-            Float min=Float.MAX_VALUE;
+            // TODO find a better way to handle the initial value
+            BigFraction min = BigFraction.TEN.pow(99);
             for(Point p:validPoints)
             {
-                Float b = m.getValue(m.getColumnSize()-1,p.getY());
-                Float Aij = m.getValue(p.getX(),p.getY());
+                BigFraction b = m.getValue(m.getColumnSize()-1,p.getY());
+                BigFraction Aij = m.getValue(p.getX(),p.getY());
 
-                assert Aij != 0f;
+                // if this is the first element. assume it is smallest
+                if(p.equals(validPoints.get(0)))
+                    min = b.divide(Aij);
 
-                if(b/Aij < min)
-                    min = b/Aij;
+                assert !Aij.equals(BigFraction.ZERO);
+
+                if(b.divide(Aij).compareTo(min) < 0)
+                    min = b.divide(Aij);
             }
 
             // create list of points containing minimum bj/aij
             for(Point p:validPoints)
             {
-                Float b = m.getValue(m.getColumnSize()-1,p.getY());
-                Float Aij = m.getValue(p.getX(),p.getY());
+                BigFraction b = m.getValue(m.getColumnSize()-1,p.getY());
+                BigFraction Aij = m.getValue(p.getX(),p.getY());
 
-                if(min.equals(b / Aij))
+                if(min.equals(b.divide(Aij)))
                     pivotPoints.add(p);
             }
             return pivotPoints;
@@ -334,20 +330,20 @@ public class Solver
         ArrayList<Integer> cols = new ArrayList<>();
         try
         {
-            // find ALL i with largest Ai0
+            // find ALL i with largest Ai0 > 0
             AugRow rowZero = m.getRow(0);
 
             // find the largest value - omit b column
-            Float largest=0f;
+            BigFraction largest=BigFraction.ZERO;
             for(int i=0; i<rowZero.size()-1;i++)
             {
-                if (rowZero.getElement(i) > largest)
+                if (rowZero.getElement(i).compareTo(largest) > 0)
                     largest = rowZero.getElement(i);
             }
             // build list of columns with the value
             for(int i=0;i<rowZero.size()-1;i++)
             {
-                Float val = rowZero.getElement(i);
+                BigFraction val = rowZero.getElement(i);
                 if(val.equals(largest))
                     cols.add(i);
             }
@@ -371,11 +367,11 @@ public class Solver
             // find the row of the most negative basic var.
             // default to row 2 if no negatives found.
             int negRow = 2;
-            Float mostNegB = 0f;
+            BigFraction mostNegB = BigFraction.ZERO;
 
             for (int j = 2; j < matrix.getRowSize(); j++)
             {
-                if (matrix.getRow(j).getB() < mostNegB)
+                if (matrix.getRow(j).getB().compareTo(mostNegB) < 0)
                 {
                     mostNegB = matrix.getRow(j).getB();
                     negRow = j;
@@ -417,16 +413,14 @@ public class Solver
     {
         try
         {
-            Printer.Log("Before pivot on " + p + "\r\n");
-            //printer.Log(matrix.toString(p));
 
             int i = p.getX();
             int j = p.getY();
 
-            Float Aij = m.getValue(i, j);
+            BigFraction Aij = m.getValue(i, j);
 
             // reduce Aij to 1
-            m.setValue(i, j, 1f);
+            m.setValue(i, j, BigFraction.ONE);
 
             // reduce all other elements in row j by Aij
             AugRow rowJ = m.getRow(j);
@@ -434,7 +428,7 @@ public class Solver
             {
                 if (k != i)
                 {
-                    Float val = rowJ.getElement(k) / Aij;
+                    BigFraction val = rowJ.getElement(k).divide(Aij);
                     rowJ.setElement(k, val);
                 }
             }
@@ -445,8 +439,8 @@ public class Solver
                 if (l != j)
                 {
                     // find the row multiplier y in the equation Ail - Aij*y = 0; y = Ail / Aij
-                    Float y = m.getValue(i, l);
-                    m.setValue(i, l, 0f);
+                    BigFraction y = m.getValue(i, l);
+                    m.setValue(i, l, BigFraction.ZERO);
 
                     // reduce all other elements using multiplier
                     for (int k = 0; k < m.getColumnSize(); k++)
@@ -454,7 +448,7 @@ public class Solver
                         if (k != i)
                         {
                             // Akl = Akl - Akj*y
-                            Float val = m.getValue(k, l) - m.getValue(k, j) * y;
+                            BigFraction val = m.getValue(k, l).subtract(m.getValue(k, j).multiply(y));
 
                             m.setValue(k, l, val);
                         }

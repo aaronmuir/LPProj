@@ -20,7 +20,8 @@ public class TextParam
         {
             // if the element is a number, add it to the row
             Float val = Float.parseFloat(param);
-            row.addElement(val);
+            BigFraction f = BigFraction.valueOf(val);
+            row.addElement(f);
         }
         catch (NumberFormatException ex)
         {
