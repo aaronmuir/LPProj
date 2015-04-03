@@ -1,4 +1,4 @@
-# Implements the simplex algorithm.
+# Linear Optimization - Implements the Simplex Algorithm
 
 ## Input
 
