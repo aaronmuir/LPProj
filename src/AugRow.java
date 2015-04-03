@@ -13,7 +13,7 @@ import java.util.ArrayList;
  */
 public class AugRow
 {
-    private ArrayList<Double> elements;
+    private ArrayList<BigFraction> elements;
 
     private Boolean negate;
     private Boolean constraint;
@@ -29,17 +29,17 @@ public class AugRow
      * Adds an element to the end of the row. The new value
      * is the b element. The previous b element gets moved to Ai.
      *
-     * @param val The value of the element to add
+     * @param f The value of the element to add
      */
-    public void addElement(Double val)
+    public void addElement(BigFraction f)
     {
-        elements.add(val);
+        elements.add(f);
     }
 
     /**
      * @return element at index i
      */
-    public Double getElement(int i)
+    public BigFraction getElement(int i)
     {
         return elements.get(i);
     }
@@ -47,11 +47,8 @@ public class AugRow
     /**
      * set the value of element at index i
      */
-    public void setElement(int i,Double val)
+    public void setElement(int i,BigFraction val)
     {
-        // floor to zero if within tolerance
-        val = Eps.zero(val);
-
         elements.set(i, val);
     }
 
@@ -61,7 +58,7 @@ public class AugRow
      *
      * @param val the value to be inserted at the end of A
      */
-    public void insertA(Double val)
+    public void insertA(BigFraction val)
     {
         elements.add(elements.size() - 1, val);
     }
@@ -71,7 +68,7 @@ public class AugRow
      *
      * @param val value to be inserted at the beginning of A
      */
-    public void insertFront(Double val)
+    public void insertFront(BigFraction val)
     {
         elements.add(0,val);
     }
@@ -98,9 +95,9 @@ public class AugRow
     public AugRow copy()
     {
         AugRow copy = new AugRow();
-        for(Double d : this.elements)
+        for(BigFraction f : this.elements)
         {
-            copy.elements.add(d);
+            copy.elements.add(f);
         }
         copy.constraint = this.constraint;
         copy.negate = this.negate;
@@ -113,7 +110,7 @@ public class AugRow
     {
         for(int i=0;i< elements.size();i++)
         {
-            elements.set(i, elements.get(i) *-1.0);
+            elements.set(i, elements.get(i).negate());
         }
     }
 
@@ -152,7 +149,7 @@ public class AugRow
      *
      * @return the value of b - last element in the augmented row
      */
-    public Double getB()
+    public BigFraction getB()
     {
         return  elements.get(elements.size()-1);
     }

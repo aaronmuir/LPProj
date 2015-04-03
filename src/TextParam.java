@@ -19,8 +19,9 @@ public class TextParam
         try
         {
             // if the element is a number, add it to the row
-            Double val = Double.parseDouble(param);
-            row.addElement(val);
+            Float val = Float.parseFloat(param);
+            BigFraction f = BigFraction.valueOf(val);
+            row.addElement(f);
         }
         catch (NumberFormatException ex)
         {

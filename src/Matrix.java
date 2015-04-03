@@ -54,11 +54,11 @@ public class Matrix
             if (row.equals(constraint))
             {
                 // insert new xi slack var to constraint
-                row.insertA(1.0);
+                row.insertA(BigFraction.ONE);
             } else
             {
                 // insert zero at xi
-                row.insertA(0.0);
+                row.insertA(BigFraction.ZERO);
             }
         }
     }
@@ -79,7 +79,7 @@ public class Matrix
      */
     public Solution getSolution()
     {
-        ArrayList<Double> solution = new ArrayList<>();
+        ArrayList<BigFraction> solution = new ArrayList<>();
 
         assert(rows.size()>0);
         assert isValid();
@@ -95,7 +95,7 @@ public class Matrix
             }
             else
             {
-                solution.add(0.0);
+                solution.add(BigFraction.ZERO);
             }
         }
         return new Solution(slackCount,getColumnSize()-slackCount-1,solution);
@@ -116,11 +116,11 @@ public class Matrix
         // move through each row (Aij)
         for(int j = 0; j < rows.size();j++)
         {
-            Double val = rows.get(j).getElement(i);
+            BigFraction val = rows.get(j).getElement(i);
 
-            if (val == 0.0)
+            if (val.equals(BigFraction.ZERO))
                 zeroCount++;
-            else if(val == 1.0)
+            else if(val.equals(BigFraction.ONE))
                 identity = j;
             else
                 return -1;
@@ -138,7 +138,7 @@ public class Matrix
      *
      * @return the negation of the objective function's value.
      */
-    public Double getObjValue()
+    public BigFraction getObjValue()
     {
         AugRow obj;
         if(hasAuxiliary)
@@ -146,7 +146,7 @@ public class Matrix
         else
             obj = getObjectiveRow();
 
-        return obj.getB()*-1.0;
+        return obj.getB().negate();
     }
     private AugRow getObjectiveRow()
     {
@@ -185,17 +185,17 @@ public class Matrix
             for (AugRow row:rows)
             {
                 if(row.equals(getObjectiveRow()))
-                    row.insertFront(0.0);
+                    row.insertFront(BigFraction.ZERO);
                 else
-                    row.insertFront(-1.0);
+                    row.insertFront(BigFraction.ONE.negate());
             }
 
             // add the new aux with x0=-1 in the new column and zero all in other columns
             AugRow aux = new AugRow();
-            aux.addElement(-1.0);
+            aux.addElement(BigFraction.ONE.negate());
             for(int i=0;i<getColumnSize()-1;i++)
             {
-                aux.addElement(0.0);
+                aux.addElement(BigFraction.ZERO);
             }
             rows.add(0,aux);
 
@@ -237,11 +237,9 @@ public class Matrix
         // do not include b column in determination
         for(int i=0;i<getColumnSize()-1;i++)
         {
-            if(firstRow.getElement(i) > 0)
+            if(firstRow.getElement(i).compareTo(BigFraction.ZERO) > 0)
             {
-                Printer p = new Printer(Printer.Style.Console);
-                p.Print("Element "+ i+ " in the top row is greater than zero. "+firstRow.getElement(i).toString()+"\r\n");
-                p.Print("Matrix is not optimal.\r\n\r\n");
+                // found an element in the first row that is greater than zero.
                 return false;
             }
         }
@@ -318,7 +316,7 @@ public class Matrix
      * @param j row
      * @return value of Aij
      */
-    public Double getValue(int i,int j)
+    public BigFraction getValue(int i,int j)
     {
         return rows.get(j).getElement(i);
     }
@@ -329,7 +327,7 @@ public class Matrix
      * @param j row
      * @return value to be set in Aij
      */
-    public void setValue(int i,int j,Double val)
+    public void setValue(int i,int j,BigFraction val)
     {
         rows.get(j).setElement(i,val);
     }

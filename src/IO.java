@@ -1,4 +1,8 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Aaron Muir
@@ -8,6 +12,9 @@ import java.io.*;
  */
 public class IO
 {
+    private static ArrayList<String> files = new ArrayList<>();
+    private static FileWriter fw;
+
     /**
      * Reads the contents of file into a string variable. crlf delimited
      *
@@ -42,18 +49,28 @@ public class IO
     /**
      * Write the text to a file at fileLocation
      *
-     * @param fileLocation file path
      * @param text text to be written to the file
      */
-    public static void writeFile(String fileLocation, String text)
+    public static void writeFile(String text, String fileLocation)
     {
         try
         {
-            BufferedWriter bw = new BufferedWriter(new FileWriter(fileLocation));
-            bw.write(text);
+            if(files.contains(fileLocation))
+            {
+                fw = new FileWriter(fileLocation,true);
+            }
+            else
+            {
+                fw = new FileWriter(fileLocation);
+                files.add(fileLocation);
+            }
+
+            fw.write(text);
+            fw.flush();
+
         } catch(IOException e)
         {
-            ExceptionHandler.Handle(e);
+
         }
     }
 }
