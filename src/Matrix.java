@@ -138,7 +138,7 @@ public class Matrix
      *
      * @return the negation of the objective function's value.
      */
-    public Double getObjValue()
+    public BigFraction getObjValue()
     {
         AugRow obj;
         if(hasAuxiliary)
@@ -146,7 +146,7 @@ public class Matrix
         else
             obj = getObjectiveRow();
 
-        return obj.getB().negate().doubleValue();
+        return obj.getB().negate();
     }
     private AugRow getObjectiveRow()
     {
@@ -239,8 +239,7 @@ public class Matrix
         {
             if(firstRow.getElement(i).compareTo(BigFraction.ZERO) > 0)
             {
-                Printer.Log("Element " + i + " in the top row is greater than zero. " + firstRow.getElement(i).toString() + "\r\n");
-                Printer.Log("Matrix is not optimal.\r\n\r\n");
+                // found an element in the first row that is greater than zero.
                 return false;
             }
         }

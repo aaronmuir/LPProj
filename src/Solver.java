@@ -1,4 +1,3 @@
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 /**
@@ -48,8 +47,6 @@ public class Solver
     {
         if(optimal.size()>0)
         {
-            DecimalFormat df = new DecimalFormat(" #0.00;-#");
-
             Printer.Log("\r\n");
             Printer.Log("-----------------\r\n");
             Printer.Log("OPTIMAL SOLUTIONS\r\n");
@@ -58,8 +55,7 @@ public class Solver
             Printer.Log("Optimal Matrices: " + optimalCount + "\r\n");
             for (Matrix m : optimal)
             {
-                Double objValue = m.getObjValue();
-                Printer.Log("Optimal Value: " + df.format(objValue) + "\r\n");
+                Printer.Log("Optimal Value: " + m.getObjValue().toBigDecimal() + "\r\n");
                 Printer.Log(m.getSolution().toString());
                 Printer.Report(m.getSolution().toString());
             }
@@ -178,7 +174,6 @@ public class Solver
      */
     private void moveToAdjBfs(Matrix matrix)
     {
-        //tables.add(matrix);
         try
         {
             // a. choose column i to enter the basis by finding largest Ai0
@@ -189,10 +184,10 @@ public class Solver
             {
                 if (matrix.hasAuxiliary())
                 {
-                    if (matrix.getObjValue() != 0)
+                    if (!matrix.getObjValue().equals(BigFraction.ZERO))
                     {
                         Printer.Log("Matrix is infeasible.\r\n");
-                        //printer.Log(matrix.toString());
+
                         matrix.flagInfeasible();
                         infeasibleCount++;
                         return;
@@ -239,9 +234,9 @@ public class Solver
                     }
                 }
 
-                // c. for each aij in list
-                // pivot on every aij and move to adj bfs on resulting matrices
-                // prioritize x0 points
+                // for each point in list, pivot on the point
+                // and move to adj bfs on resulting matrices
+                // prioritize pivoting on x0 points over others
 
                 for(Point p:points)
                 {

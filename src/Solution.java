@@ -39,7 +39,7 @@ public class Solution
         int count = 0;
         for (BigFraction element : elements)
         {
-            if (element == BigFraction.ZERO)
+            if (element.equals(BigFraction.ZERO))
                 count++;
         }
         return count<=slackVars;
@@ -69,9 +69,9 @@ public class Solution
         String s = "";
 
         for(int i = 1; i <= basicVars;i++)
-            if(!elements.get(i-1).equals(BigFraction.ZERO))
-                s += " x" + i + "=" + elements.get(i-1)+"\r\n";
-
+            if(!elements.get(i-1).equals(BigFraction.ZERO)) {
+                s += " x" + i + "=" + elements.get(i - 1).toBigDecimal() + "\r\n";
+            }
         s+= "\r\n";
         return s;
     }
